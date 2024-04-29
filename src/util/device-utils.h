@@ -37,7 +37,7 @@
 #define ktid(axis) (blockIdx.axis * blockDim.axis + threadIdx.axis)
 #define get_tid(tid) int tid = ktid(x)
 #define get_and_restrict_tid(tid, max) int tid = ktid(x); do { if (tid >= max) return; } while (0)
-#define cuExit() asm("exit;")
+#define cuExit() exit(0)
 
 template<typename T>
 struct best_return_type_for_const {

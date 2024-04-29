@@ -77,7 +77,7 @@ class PathTracer {
     int height{};
     double tm_gamma = 2.2; ///< gamma
   };
-  CUDA_CONSTANT Config config;
+//  CUDA_CONSTANT Config config;
   size_t max_ray_depth{}; ///< maximum allowed ray depth (applies to all rays)
   size_t ns_aa{}; ///< number of camera rays in one pixel (along one axis)
   size_t ns_area_light{}; ///< number samples per area light source
@@ -91,9 +91,9 @@ class PathTracer {
 
   void initRng() const;
 
-  [[nodiscard]] size_t targetSamplePaths() const {
-    return config.spp * sampleBuffer.w * sampleBuffer.h;
-  }
+//  [[nodiscard]] size_t targetSamplePaths() const {
+//    return config.spp * sampleBuffer.w * sampleBuffer.h;
+//  }
 
   ///< true if sampling uniformly from hemisphere for direct lighting. Otherwise, light sample
   // SOA

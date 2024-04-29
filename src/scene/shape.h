@@ -211,7 +211,7 @@ replace(Triangle)
 case name##_enum: return item.name##_union.get_bbox();
   CUDA_DEVICE [[nodiscard]] CUDA_FORCEINLINE BBox get_bbox() const {
     SWITCH_DESPATCH(SWITCH_CASE_CLAUSE);
-    cuExit();
+    
   }
 
 #undef SWITCH_CASE_CLAUSE
@@ -219,7 +219,7 @@ case name##_enum: return item.name##_union.get_bbox();
 case name##_enum: return item.name##_union.has_intersection(o, d);
   CUDA_DEVICE [[nodiscard]] CUDA_FORCEINLINE bool has_intersection(const double3 &o, const double3 &d) const {
     SWITCH_DESPATCH(SWITCH_CASE_CLAUSE);
-    cuExit();
+    
   }
 
 #undef SWITCH_CASE_CLAUSE
@@ -230,7 +230,6 @@ case name##_enum: return item.name##_union.intersect(o, d, isect_n, t);
                                               double3 &isect_n,
                                               double &t) const {
     SWITCH_DESPATCH(SWITCH_CASE_CLAUSE);
-    cuExit();
   }
 
 #undef SWITCH_CASE_CLAUSE
@@ -247,7 +246,7 @@ CUDA_CALLABLE CUDA_FORCEINLINE name& get##name() { type = name##_enum; return it
 case name##_enum: return item.name##_union.sample(uv, pdf, normal);
   CUDA_DEVICE CUDA_FORCEINLINE double3 sample(const double2 &uv, double *pdf, double3 *normal) const {
     SWITCH_DESPATCH(SWITCH_CASE_CLAUSE);
-    cuExit();
+    
   }
 
 #undef SWITCH_CASE_CLAUSE
@@ -256,7 +255,7 @@ case name##_enum: return item.name##_union.sample(uv, pdf, normal);
 case name##_enum: return item.name##_union.pdf(pos);
   CUDA_DEVICE [[nodiscard]] CUDA_FORCEINLINE double pdf(const double3 &pos) const {
     SWITCH_DESPATCH(SWITCH_CASE_CLAUSE);
-    cuExit();
+    
   }
 
 #undef SWITCH_DESPATCH

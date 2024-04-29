@@ -377,259 +377,259 @@ void Application::cursor_event(float x, float y) {
   mouseY = y;
 }
 
-void Application::scroll_event(float offset_x, float offset_y) {
-
-  update_style();
-
-  switch(mode) {
-    case EDIT_MODE:
-    case VISUALIZE_MODE:
-      camera.move_forward(-offset_y * scroll_rate);
-      break;
-    case RENDER_MODE:
-      break;
-  }
-}
-
-void Application::mouse_event(int key, int event, unsigned char mods) {
-  switch(event) {
-    case EVENT_PRESS:
-      switch(key) {
-        case MOUSE_LEFT:
-          mouse_pressed(LEFT);
-          break;
-        case MOUSE_RIGHT:
-          mouse_pressed(RIGHT);
-          break;
-        case MOUSE_MIDDLE:
-          mouse_pressed(MIDDLE);
-          break;
-      }
-      break;
-    case EVENT_RELEASE:
-      switch(key) {
-        case MOUSE_LEFT:
-          mouse_released(LEFT);
-          break;
-        case MOUSE_RIGHT:
-          mouse_released(RIGHT);
-          break;
-        case MOUSE_MIDDLE:
-          mouse_released(MIDDLE);
-          break;
-      }
-      break;
-  }
-}
-
-void Application::keyboard_event(int key, int event, unsigned char mods) {
-  switch (mode) {
-    case RENDER_MODE:
-      if (event == EVENT_PRESS) {
-        switch (key) {
-          case 'e': case 'E':
-            to_edit_mode();
-            break;
-          case 'v': case 'V':
-            renderer->stop();
-            renderer->start_visualizing();
-            mode = VISUALIZE_MODE;
-            break;
-          case 's': case 'S':
-            renderer->save_image();
-            break;
-          case '[': case ']':
-          case '+': case '=':
-          case '-': case '_':
-          case '.': case '>':
-          case ',': case '<':
-          case 'h': case 'H':
-          case 'k': case 'K':
-          case 'l': case 'L':
-          case ';': case '\'':
-            renderer->stop();
-            renderer->key_press(key);
-            renderer->start_raytracing();
-            break;
-          case 'C': 
-            renderer->key_press(key);
-            break;
-          case 'r': case 'R':
-            renderer->stop();
-            renderer->start_raytracing();
-            break;
-          case 'd': case 'D':
-            camera.dump_settings(filename + "_cam_settings.txt");
-            break;
-        }
-      }
-      break;
-    case VISUALIZE_MODE:
-      if (event == EVENT_PRESS) {
-        switch(key) {
-          case 'e': case 'E':
-            to_edit_mode();
-            break;
-          case 'r': case 'R':
-            renderer->stop();
-            renderer->start_raytracing();
-            mode = RENDER_MODE;
-            break;
-          case ' ':
-            reset_camera();
-            break;
-          default:
-            renderer->key_press(key);
-        }
-      }
-      break;
-    case EDIT_MODE:
-      if (event == EVENT_PRESS) {
-        switch(key) {
-          case 'r': case 'R':
-            set_up_pathtracer();
-            renderer->start_raytracing();
-            mode = RENDER_MODE;
-            break;
-          case 'v': case 'V':
-            set_up_pathtracer();
-            renderer->start_visualizing();
-            mode = VISUALIZE_MODE;
-            break;
-          case ' ':
-            reset_camera();
-            break;
-          case 'h': case 'H':
-            show_hud = !show_hud;
-            break;
-          case 'u': case 'U':
-            scene->upsample_selected_mesh();
-            break;
-          case 'd': case 'D':
-            scene->downsample_selected_mesh();
-            break;
-          case 'i': case 'I':
-            // i for isotropic.
-            scene->resample_selected_mesh();
-            break;
-          case 'f': case 'F':
-            scene->flip_selected_edge();
-            break;
-          case 's': case 'S':
-            scene->split_selected_edge();
-            break;
-          case 'c': case 'C':
-            scene->collapse_selected_edge();
-            break;
-          default:
-            break;
-        }
-      }
-      break;
-  }
-}
-
-void Application::mouse_pressed(e_mouse_button b) {
-  switch (b) {
-    case LEFT:
-      if (mode == EDIT_MODE) {
-        if (scene->has_hover()) {
-          scene->confirm_selection();
-        } else {
-          scene->invalidate_selection();
-        }
-      } else if (mode == RENDER_MODE && renderer->render_cell) {
-        renderer->cell_tl = Vector2D(mouseX, screenH - mouseY);
-        renderer->cell_br = renderer->cell_tl;
-      }
-      leftDown = true;
-      break;
-    case RIGHT:
-      rightDown = true;
-      break;
-    case MIDDLE:
-      middleDown = true;
-      break;
-  }
-}
-
-void Application::mouse_released(e_mouse_button b) {
-  switch (b) {
-    case LEFT:
-      leftDown = false;
-      if (mode == RENDER_MODE && renderer->render_cell) {
-        Vector2D tl(max(0.,min(renderer->cell_tl.x,renderer->cell_br.x)),
-                    max(0.,min(renderer->cell_tl.y,renderer->cell_br.y)));
-        Vector2D br(min(screenW*1.,max(renderer->cell_tl.x,renderer->cell_br.x)),
-                    min(screenH*1.,max(renderer->cell_tl.y,renderer->cell_br.y)));
-        renderer->cell_tl = tl;
-        renderer->cell_br = br;
-        cout << "[renderer] Selected cell measures " << (int)(br.x-tl.x) << "x" << (int)(br.y-tl.y) << " pixels" << endl;
-        renderer->stop();
-        renderer->start_raytracing();
-      }
-      break;
-    case RIGHT:
-      if (mode == RENDER_MODE) {
-        renderer->autofocus(Vector2D(mouseX, screenH - mouseY));
-        renderer->stop();
-        renderer->start_raytracing();
-      }
-      rightDown = false;
-      break;
-    case MIDDLE:
-      middleDown = false;
-      break;
-  }
-}
-
-/*
-  When in edit mode and there is a selection, move the selection.
-  When in visualization mode, rotate.
-*/
-void Application::mouse1_dragged(float x, float y) {
-  if (mode == RENDER_MODE) {
-    renderer->cell_br = Vector2D(x, screenH - y);
-    return;
-  }
-  float dx = (x - mouseX);
-  float dy = (y - mouseY);
-
-  if (mode == EDIT_MODE && scene->has_selection()) {
-    scene->drag_selection(2 * dx / screenW, 2 * -dy / screenH,
-                          get_world_to_3DH());
-  } else {
-    camera.rotate_by(-dy * (PI / screenH), -dx * (PI / screenW));
-  }
-}
-
-/*
-  When the mouse is dragged with the right button held down, translate.
-*/
-void Application::mouse2_dragged(float x, float y) {
-  if (mode == RENDER_MODE) return;
-  float dx = (x - mouseX);
-  float dy = (y - mouseY);
-
-  // don't negate y because up is down.
-  camera.move_by(-dx, dy, canonical_view_distance);
-}
-
-void Application::mouse_moved(float x, float y) {
-  if (mode != EDIT_MODE) return;
-  y = screenH - y; // Because up is down.
-  // Converts x from [0, w] to [-1, 1], and similarly for y.
-  Vector2D p(x * 2 / screenW - 1, y * 2 / screenH - 1);
-  scene->update_selection(p, get_world_to_3DH());
-}
-
-void Application::to_edit_mode() {
-  if (mode == EDIT_MODE) return;
-  renderer->stop();
-  renderer->clear();
-  mode = EDIT_MODE;
-  mouse_moved(mouseX, mouseY);
-}
+//void Application::scroll_event(float offset_x, float offset_y) {
+//
+//  update_style();
+//
+//  switch(mode) {
+//    case EDIT_MODE:
+//    case VISUALIZE_MODE:
+//      camera.move_forward(-offset_y * scroll_rate);
+//      break;
+//    case RENDER_MODE:
+//      break;
+//  }
+//}
+//
+//void Application::mouse_event(int key, int event, unsigned char mods) {
+//  switch(event) {
+//    case EVENT_PRESS:
+//      switch(key) {
+//        case MOUSE_LEFT:
+//          mouse_pressed(LEFT);
+//          break;
+//        case MOUSE_RIGHT:
+//          mouse_pressed(RIGHT);
+//          break;
+//        case MOUSE_MIDDLE:
+//          mouse_pressed(MIDDLE);
+//          break;
+//      }
+//      break;
+//    case EVENT_RELEASE:
+//      switch(key) {
+//        case MOUSE_LEFT:
+//          mouse_released(LEFT);
+//          break;
+//        case MOUSE_RIGHT:
+//          mouse_released(RIGHT);
+//          break;
+//        case MOUSE_MIDDLE:
+//          mouse_released(MIDDLE);
+//          break;
+//      }
+//      break;
+//  }
+//}
+//
+//void Application::keyboard_event(int key, int event, unsigned char mods) {
+//  switch (mode) {
+//    case RENDER_MODE:
+//      if (event == EVENT_PRESS) {
+//        switch (key) {
+//          case 'e': case 'E':
+//            to_edit_mode();
+//            break;
+//          case 'v': case 'V':
+//            renderer->stop();
+//            renderer->start_visualizing();
+//            mode = VISUALIZE_MODE;
+//            break;
+//          case 's': case 'S':
+//            renderer->save_image();
+//            break;
+//          case '[': case ']':
+//          case '+': case '=':
+//          case '-': case '_':
+//          case '.': case '>':
+//          case ',': case '<':
+//          case 'h': case 'H':
+//          case 'k': case 'K':
+//          case 'l': case 'L':
+//          case ';': case '\'':
+//            renderer->stop();
+//            renderer->key_press(key);
+//            renderer->start_raytracing();
+//            break;
+//          case 'C':
+//            renderer->key_press(key);
+//            break;
+//          case 'r': case 'R':
+//            renderer->stop();
+//            renderer->start_raytracing();
+//            break;
+//          case 'd': case 'D':
+//            camera.dump_settings(filename + "_cam_settings.txt");
+//            break;
+//        }
+//      }
+//      break;
+//    case VISUALIZE_MODE:
+//      if (event == EVENT_PRESS) {
+//        switch(key) {
+//          case 'e': case 'E':
+//            to_edit_mode();
+//            break;
+//          case 'r': case 'R':
+//            renderer->stop();
+//            renderer->start_raytracing();
+//            mode = RENDER_MODE;
+//            break;
+//          case ' ':
+//            reset_camera();
+//            break;
+//          default:
+//            renderer->key_press(key);
+//        }
+//      }
+//      break;
+//    case EDIT_MODE:
+//      if (event == EVENT_PRESS) {
+//        switch(key) {
+//          case 'r': case 'R':
+//            set_up_pathtracer();
+//            renderer->start_raytracing();
+//            mode = RENDER_MODE;
+//            break;
+//          case 'v': case 'V':
+//            set_up_pathtracer();
+//            renderer->start_visualizing();
+//            mode = VISUALIZE_MODE;
+//            break;
+//          case ' ':
+//            reset_camera();
+//            break;
+//          case 'h': case 'H':
+//            show_hud = !show_hud;
+//            break;
+//          case 'u': case 'U':
+//            scene->upsample_selected_mesh();
+//            break;
+//          case 'd': case 'D':
+//            scene->downsample_selected_mesh();
+//            break;
+//          case 'i': case 'I':
+//            // i for isotropic.
+//            scene->resample_selected_mesh();
+//            break;
+//          case 'f': case 'F':
+//            scene->flip_selected_edge();
+//            break;
+//          case 's': case 'S':
+//            scene->split_selected_edge();
+//            break;
+//          case 'c': case 'C':
+//            scene->collapse_selected_edge();
+//            break;
+//          default:
+//            break;
+//        }
+//      }
+//      break;
+//  }
+//}
+//
+//void Application::mouse_pressed(e_mouse_button b) {
+//  switch (b) {
+//    case LEFT:
+//      if (mode == EDIT_MODE) {
+//        if (scene->has_hover()) {
+//          scene->confirm_selection();
+//        } else {
+//          scene->invalidate_selection();
+//        }
+//      } else if (mode == RENDER_MODE && renderer->render_cell) {
+//        renderer->cell_tl = Vector2D(mouseX, screenH - mouseY);
+//        renderer->cell_br = renderer->cell_tl;
+//      }
+//      leftDown = true;
+//      break;
+//    case RIGHT:
+//      rightDown = true;
+//      break;
+//    case MIDDLE:
+//      middleDown = true;
+//      break;
+//  }
+//}
+//
+//void Application::mouse_released(e_mouse_button b) {
+//  switch (b) {
+//    case LEFT:
+//      leftDown = false;
+//      if (mode == RENDER_MODE && renderer->render_cell) {
+//        Vector2D tl(max(0.,min(renderer->cell_tl.x,renderer->cell_br.x)),
+//                    max(0.,min(renderer->cell_tl.y,renderer->cell_br.y)));
+//        Vector2D br(min(screenW*1.,max(renderer->cell_tl.x,renderer->cell_br.x)),
+//                    min(screenH*1.,max(renderer->cell_tl.y,renderer->cell_br.y)));
+//        renderer->cell_tl = tl;
+//        renderer->cell_br = br;
+//        cout << "[renderer] Selected cell measures " << (int)(br.x-tl.x) << "x" << (int)(br.y-tl.y) << " pixels" << endl;
+//        renderer->stop();
+//        renderer->start_raytracing();
+//      }
+//      break;
+//    case RIGHT:
+//      if (mode == RENDER_MODE) {
+//        renderer->autofocus(Vector2D(mouseX, screenH - mouseY));
+//        renderer->stop();
+//        renderer->start_raytracing();
+//      }
+//      rightDown = false;
+//      break;
+//    case MIDDLE:
+//      middleDown = false;
+//      break;
+//  }
+//}
+//
+///*
+//  When in edit mode and there is a selection, move the selection.
+//  When in visualization mode, rotate.
+//*/
+//void Application::mouse1_dragged(float x, float y) {
+//  if (mode == RENDER_MODE) {
+//    renderer->cell_br = Vector2D(x, screenH - y);
+//    return;
+//  }
+//  float dx = (x - mouseX);
+//  float dy = (y - mouseY);
+//
+//  if (mode == EDIT_MODE && scene->has_selection()) {
+//    scene->drag_selection(2 * dx / screenW, 2 * -dy / screenH,
+//                          get_world_to_3DH());
+//  } else {
+//    camera.rotate_by(-dy * (PI / screenH), -dx * (PI / screenW));
+//  }
+//}
+//
+///*
+//  When the mouse is dragged with the right button held down, translate.
+//*/
+//void Application::mouse2_dragged(float x, float y) {
+//  if (mode == RENDER_MODE) return;
+//  float dx = (x - mouseX);
+//  float dy = (y - mouseY);
+//
+//  // don't negate y because up is down.
+//  camera.move_by(-dx, dy, canonical_view_distance);
+//}
+//
+//void Application::mouse_moved(float x, float y) {
+//  if (mode != EDIT_MODE) return;
+//  y = screenH - y; // Because up is down.
+//  // Converts x from [0, w] to [-1, 1], and similarly for y.
+//  Vector2D p(x * 2 / screenW - 1, y * 2 / screenH - 1);
+//  scene->update_selection(p, get_world_to_3DH());
+//}
+//
+//void Application::to_edit_mode() {
+//  if (mode == EDIT_MODE) return;
+//  renderer->stop();
+//  renderer->clear();
+//  mode = EDIT_MODE;
+//  mouse_moved(mouseX, mouseY);
+//}
 
 void Application::set_up_pathtracer() {
   if (mode != EDIT_MODE) return;

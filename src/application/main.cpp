@@ -194,18 +194,22 @@ int main(int argc, char **argv) {
 
     sceneFilePath = argv[optind];
   }
+  //file input
+  //需改为hard code scene
   msg("Input scene file: " << sceneFilePath);
   string sceneFile = sceneFilePath.substr(sceneFilePath.find_last_of('/') + 1);
   sceneFile = sceneFile.substr(0, sceneFile.find(".dae"));
   config.pathtracer_filename = sceneFile;
 
   // parse scene
+  //需改为hard code scene
   Collada::SceneInfo *sceneInfo = new Collada::SceneInfo();
   if (Collada::ColladaParser::load(sceneFilePath.c_str(), sceneInfo) < 0) {
     delete sceneInfo;
     exit(0);
   }
   // create application
+  //手动config？
   Application *app = new Application(config, !write_to_file);
 
   msg("Rendering using " << config.pathtracer_num_threads << " threads");

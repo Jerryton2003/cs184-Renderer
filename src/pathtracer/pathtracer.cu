@@ -10,37 +10,37 @@
 
 namespace CGL {
 PathTracer::PathTracer() {
-  path_pool.orig = std::make_unique<DeviceArray<double3>>(config.num_paths);
-  path_pool.dir = std::make_unique<DeviceArray<double3>>(config.num_paths);
-  path_pool.throughput = std::make_unique<DeviceArray<double3>>(config.num_paths);
-  path_pool.indices = std::make_unique<DeviceArray<int>>(config.num_paths);
-  interaction_pool.n = std::make_unique<DeviceArray<double3>>(config.num_paths);
-  interaction_pool.t = std::make_unique<DeviceArray<double>>(config.num_paths);
-  path_pool.scatter_type = std::make_unique<DeviceArray<int>>(config.num_paths);
-  interaction_pool.primitive_id = std::make_unique<DeviceArray<int>>(config.num_paths);
-  interaction_pool.mat_id = std::make_unique<DeviceArray<int>>(config.num_paths);
-  interaction_pool.is_intersected = std::make_unique<DeviceArray<bool>>(config.num_paths);
-  nee_path_pool.nee_pdf_light = std::make_unique<DeviceArray<double>>(config.num_paths);
-  nee_path_pool.nee_pos = std::make_unique<DeviceArray<double3>>(config.num_paths);
-  nee_path_pool.nee_light_id = std::make_unique<DeviceArray<int>>(config.num_paths);
-  nee_path_pool.nee_mat_pdf = std::make_unique<DeviceArray<double>>(config.num_paths);
-  path_pool.mat_pdf = std::make_unique<DeviceArray<double>>(config.num_paths);
-  path_pool.mat_eval_result = std::make_unique<DeviceArray<double3>>(config.num_paths);
-  nee_path_pool.nee_dir = std::make_unique<DeviceArray<double3>>(config.num_paths);
-  nee_path_pool.nee_t = std::make_unique<DeviceArray<double>>(config.num_paths);
-  nee_path_pool.nee_light_normal = std::make_unique<DeviceArray<double3>>(config.num_paths);
-  nee_path_pool.nee_pos_cache = std::make_unique<DeviceArray<double3>>(config.num_paths);
-  nee_path_pool.nee_throughput = std::make_unique<DeviceArray<double3>>(config.num_paths);
-  nee_path_pool.nee_medium_id = std::make_unique<DeviceArray<int8_t>>(config.num_paths);
-  path_pool.depth = std::make_unique<DeviceArray<int>>(config.num_paths);
-  path_pool.medium_id = std::make_unique<DeviceArray<int8_t>>(config.num_paths);
-  path_pool.pdf_delta = std::make_unique<DeviceArray<double>>(config.num_paths);
-  path_pool.pdf_ratio = std::make_unique<DeviceArray<double>>(config.num_paths);
-  rngs = std::make_unique<DeviceArray<RandomGenerator>>(config.num_paths);
-  work_pool = std::make_unique<MultipleWorkPool>(
-      static_cast<int>(SurfaceInfo::NumSurfaceInfos) + static_cast<int>(PhaseFunctions::NumPhaseFunctions),
-      config.num_paths);
-  ray_keys = std::make_unique<DeviceArray<uint64_t>>(config.num_paths);
+//  path_pool.orig = std::make_unique<DeviceArray<double3>>(config.num_paths);
+//  path_pool.dir = std::make_unique<DeviceArray<double3>>(config.num_paths);
+//  path_pool.throughput = std::make_unique<DeviceArray<double3>>(config.num_paths);
+//  path_pool.indices = std::make_unique<DeviceArray<int>>(config.num_paths);
+//  interaction_pool.n = std::make_unique<DeviceArray<double3>>(config.num_paths);
+//  interaction_pool.t = std::make_unique<DeviceArray<double>>(config.num_paths);
+//  path_pool.scatter_type = std::make_unique<DeviceArray<int>>(config.num_paths);
+//  interaction_pool.primitive_id = std::make_unique<DeviceArray<int>>(config.num_paths);
+//  interaction_pool.mat_id = std::make_unique<DeviceArray<int>>(config.num_paths);
+//  interaction_pool.is_intersected = std::make_unique<DeviceArray<bool>>(config.num_paths);
+//  nee_path_pool.nee_pdf_light = std::make_unique<DeviceArray<double>>(config.num_paths);
+//  nee_path_pool.nee_pos = std::make_unique<DeviceArray<double3>>(config.num_paths);
+//  nee_path_pool.nee_light_id = std::make_unique<DeviceArray<int>>(config.num_paths);
+//  nee_path_pool.nee_mat_pdf = std::make_unique<DeviceArray<double>>(config.num_paths);
+//  path_pool.mat_pdf = std::make_unique<DeviceArray<double>>(config.num_paths);
+//  path_pool.mat_eval_result = std::make_unique<DeviceArray<double3>>(config.num_paths);
+//  nee_path_pool.nee_dir = std::make_unique<DeviceArray<double3>>(config.num_paths);
+//  nee_path_pool.nee_t = std::make_unique<DeviceArray<double>>(config.num_paths);
+//  nee_path_pool.nee_light_normal = std::make_unique<DeviceArray<double3>>(config.num_paths);
+//  nee_path_pool.nee_pos_cache = std::make_unique<DeviceArray<double3>>(config.num_paths);
+//  nee_path_pool.nee_throughput = std::make_unique<DeviceArray<double3>>(config.num_paths);
+//  nee_path_pool.nee_medium_id = std::make_unique<DeviceArray<int8_t>>(config.num_paths);
+//  path_pool.depth = std::make_unique<DeviceArray<int>>(config.num_paths);
+//  path_pool.medium_id = std::make_unique<DeviceArray<int8_t>>(config.num_paths);
+//  path_pool.pdf_delta = std::make_unique<DeviceArray<double>>(config.num_paths);
+//  path_pool.pdf_ratio = std::make_unique<DeviceArray<double>>(config.num_paths);
+//  rngs = std::make_unique<DeviceArray<RandomGenerator>>(config.num_paths);
+//  work_pool = std::make_unique<MultipleWorkPool>(
+//      static_cast<int>(SurfaceInfo::NumSurfaceInfos) + static_cast<int>(PhaseFunctions::NumPhaseFunctions),
+//      config.num_paths);
+//  ray_keys = std::make_unique<DeviceArray<uint64_t>>(config.num_paths);
   tm_level = 1.0f;
   tm_key = 0.18;
   tm_wht = 5.0f;
@@ -652,20 +652,20 @@ static CUDA_GLOBAL void kernelSetRng(int num_paths,
 }
 
 void PathTracer::initRng() const {
-  std::vector<uint64_t> host_seeds(config.num_paths);
-  for (int i = 0; i < config.num_paths; i++) {
-    chrono::high_resolution_clock::time_point now = chrono::high_resolution_clock::now();
-    chrono::nanoseconds ns = chrono::duration_cast<chrono::nanoseconds>(now.time_since_epoch());
-    host_seeds[i] = ns.count();
-  }
-  auto device_seeds = std::make_unique<DeviceArray<uint64_t>>
-      (host_seeds);
-  cudaSafeCheck(
-      kernelSetRng<<<LAUNCH_THREADS(config.num_paths)>>>(
-          config.num_paths,
-          rngs->accessor(),
-          device_seeds->accessor()
-      ));
+//  std::vector<uint64_t> host_seeds(config.num_paths);
+//  for (int i = 0; i < config.num_paths; i++) {
+//    chrono::high_resolution_clock::time_point now = chrono::high_resolution_clock::now();
+//    chrono::nanoseconds ns = chrono::duration_cast<chrono::nanoseconds>(now.time_since_epoch());
+//    host_seeds[i] = ns.count();
+//  }
+//  auto device_seeds = std::make_unique<DeviceArray<uint64_t>>
+//      (host_seeds);
+//  cudaSafeCheck(
+//      kernelSetRng<<<LAUNCH_THREADS(config.num_paths)>>>(
+//          config.num_paths,
+//          rngs->accessor(),
+//          device_seeds->accessor()
+//      ));
 }
 
 #define COPY_TO_CONSTANT(device_array_name, constant_name) \
@@ -724,70 +724,70 @@ void PathTracer::copyToConstantMemory() const {
 }
 
 void PathTracer::raytrace() {
-  std::vector<Medium> host_media(1);
-  host_media[0].getHomogeneousMedium() = HomogeneousMedium(make_double3(0.1, 0.1, 0.1), make_double3(0.1, 0.7, 0.1));
-  scene->media = std::make_unique<DeviceArray<Medium>>(host_media);
-  std::vector<PhaseFunction> host_phase_functions(1);
-  host_phase_functions[0].pf = PhaseFunctions::Isotropic;
-  host_phase_functions[0].pf_id = 0;
-  scene->phase_functions = std::make_unique<DeviceArray<PhaseFunction>>(host_phase_functions);
-  scene->phase_functions->copyFrom(host_phase_functions);
-  std::vector<IsotropicData> host_isotropic_data(1);
-  host_isotropic_data[0].albedo = make_double3(1.0, 1.0, 1.0);
-  scene->isotropic_data = std::make_unique<DeviceArray<IsotropicData>>(host_isotropic_data);
-  camera->medium_id = 0;
-  stream = std::make_unique<CudaStream>();
-  int rest_samples = static_cast<int>(targetSamplePaths());
-  int current_live_paths = min(rest_samples, config.num_paths);
-  int total_samples = 0;
-  config.width = static_cast<int>(sampleBuffer.w);
-  config.height = static_cast<int>(sampleBuffer.h);
-  config.num_paths = std::min(config.num_paths, rest_samples);
-  cudaMemcpyToSymbol(kPathTracerConfig, &config, sizeof(Config));
-  std::vector<int> work_sizes(work_pool->nWorks);
-  std::cout << std::format("Config: num_paths: {}, spp: {}, width: {}, height: {}\n",
-                           config.num_paths, config.spp, config.width, config.height);
-  initRng();
-  // print camera->c2w
-  copyToConstantMemory();
-  cudaSafeCheck(kernelRayGeneration<<<LAUNCH_THREADS(current_live_paths)>>>(
-      current_live_paths,
-      camera->hFov,
-      camera->vFov,
-      camera->pos,
-      to_Mat3(camera->c2w),
-      camera->medium_id
-  ));
-  std::cout << std::format("Start with {} paths\n", current_live_paths);
-  cudaSafeCheck(kernelExtendPath<<<LAUNCH_THREADS(current_live_paths)>>>(
-      current_live_paths));
-  total_samples += current_live_paths;
-  int num_new_paths{}, old_live_paths{};
-  while (true) {
-    printf("current live paths: %d\n", current_live_paths);
-    cudaMemset(work_pool->work_sizes->data(), 0, sizeof(int) * work_pool->nWorks);
-    cudaSafeCheck(kernelPathLogic<<<LAUNCH_THREADS(current_live_paths)>>>(current_live_paths));
-    cudaWait();
-    work_pool->getWorkSize(work_sizes);
-    int num_terminated_paths = work_sizes[surfaceInfo2ScatterType(SurfaceInfo::EnvMap)];
-    rest_samples -= num_terminated_paths;
-    old_live_paths = current_live_paths - num_terminated_paths;
-    std::cout << std::format("{} paths terminated, {} samples left\n", num_terminated_paths, rest_samples);
-    if (rest_samples == 0) break;
-    auto mat_begin = thrust::device_ptr<int>(path_pool.scatter_type->begin());
-    auto mat_end = thrust::device_ptr<int>(path_pool.scatter_type->begin() + current_live_paths);
-    auto idx_begin = thrust::device_ptr<int>(work_pool->indices->begin());
-    cudaSafeCheck(thrust::sort_by_key(mat_begin, mat_end, idx_begin));
-    current_live_paths = std::min(rest_samples, config.num_paths);
-    num_new_paths = current_live_paths - old_live_paths;
-    // put the terminated paths at the end of the pool, and we only care about the first current_live_paths paths
-    shadeScatter(work_sizes, total_samples, num_new_paths);
-    total_samples += num_new_paths;
-    pathExtend(num_new_paths, current_live_paths, lbvh->scene_bound);
-  }
-  cudaSafeCheck(kernelAverageImage<<<LAUNCH_THREADS(sampleBuffer.w * sampleBuffer.h)>>>(
-      static_cast<int>(sampleBuffer.w * sampleBuffer.h),
-      sampleBuffer.data->accessor()));
+//  std::vector<Medium> host_media(1);
+//  host_media[0].getHomogeneousMedium() = HomogeneousMedium(make_double3(0.1, 0.1, 0.1), make_double3(0.1, 0.7, 0.1));
+//  scene->media = std::make_unique<DeviceArray<Medium>>(host_media);
+//  std::vector<PhaseFunction> host_phase_functions(1);
+//  host_phase_functions[0].pf = PhaseFunctions::Isotropic;
+//  host_phase_functions[0].pf_id = 0;
+//  scene->phase_functions = std::make_unique<DeviceArray<PhaseFunction>>(host_phase_functions);
+//  scene->phase_functions->copyFrom(host_phase_functions);
+//  std::vector<IsotropicData> host_isotropic_data(1);
+//  host_isotropic_data[0].albedo = make_double3(1.0, 1.0, 1.0);
+//  scene->isotropic_data = std::make_unique<DeviceArray<IsotropicData>>(host_isotropic_data);
+//  camera->medium_id = 0;
+//  stream = std::make_unique<CudaStream>();
+//  int rest_samples = static_cast<int>(targetSamplePaths());
+//  int current_live_paths = min(rest_samples, config.num_paths);
+//  int total_samples = 0;
+//  config.width = static_cast<int>(sampleBuffer.w);
+//  config.height = static_cast<int>(sampleBuffer.h);
+//  config.num_paths = std::min(config.num_paths, rest_samples);
+//  cudaMemcpyToSymbol(kPathTracerConfig, &config, sizeof(Config));
+//  std::vector<int> work_sizes(work_pool->nWorks);
+//  std::cout << std::format("Config: num_paths: {}, spp: {}, width: {}, height: {}\n",
+//                           config.num_paths, config.spp, config.width, config.height);
+//  initRng();
+//  // print camera->c2w
+//  copyToConstantMemory();
+//  cudaSafeCheck(kernelRayGeneration<<<LAUNCH_THREADS(current_live_paths)>>>(
+//      current_live_paths,
+//      camera->hFov,
+//      camera->vFov,
+//      camera->pos,
+//      to_Mat3(camera->c2w),
+//      camera->medium_id
+//  ));
+//  std::cout << std::format("Start with {} paths\n", current_live_paths);
+//  cudaSafeCheck(kernelExtendPath<<<LAUNCH_THREADS(current_live_paths)>>>(
+//      current_live_paths));
+//  total_samples += current_live_paths;
+//  int num_new_paths{}, old_live_paths{};
+//  while (true) {
+//    printf("current live paths: %d\n", current_live_paths);
+//    cudaMemset(work_pool->work_sizes->data(), 0, sizeof(int) * work_pool->nWorks);
+//    cudaSafeCheck(kernelPathLogic<<<LAUNCH_THREADS(current_live_paths)>>>(current_live_paths));
+//    cudaWait();
+//    work_pool->getWorkSize(work_sizes);
+//    int num_terminated_paths = work_sizes[surfaceInfo2ScatterType(SurfaceInfo::EnvMap)];
+//    rest_samples -= num_terminated_paths;
+//    old_live_paths = current_live_paths - num_terminated_paths;
+//    std::cout << std::format("{} paths terminated, {} samples left\n", num_terminated_paths, rest_samples);
+//    if (rest_samples == 0) break;
+//    auto mat_begin = thrust::device_ptr<int>(path_pool.scatter_type->begin());
+//    auto mat_end = thrust::device_ptr<int>(path_pool.scatter_type->begin() + current_live_paths);
+//    auto idx_begin = thrust::device_ptr<int>(work_pool->indices->begin());
+//    cudaSafeCheck(thrust::sort_by_key(mat_begin, mat_end, idx_begin));
+//    current_live_paths = std::min(rest_samples, config.num_paths);
+//    num_new_paths = current_live_paths - old_live_paths;
+//    // put the terminated paths at the end of the pool, and we only care about the first current_live_paths paths
+//    shadeScatter(work_sizes, total_samples, num_new_paths);
+//    total_samples += num_new_paths;
+//    pathExtend(num_new_paths, current_live_paths, lbvh->scene_bound);
+//  }
+//  cudaSafeCheck(kernelAverageImage<<<LAUNCH_THREADS(sampleBuffer.w * sampleBuffer.h)>>>(
+//      static_cast<int>(sampleBuffer.w * sampleBuffer.h),
+//      sampleBuffer.data->accessor()));
 }
 
 void PathTracer::autofocus(Vector2D loc) {

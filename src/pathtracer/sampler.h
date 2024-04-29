@@ -7,6 +7,8 @@
 #include "util/random_util.h"
 #include <cuda_runtime.h>
 #include <util/gpu-arrays.h>
+#define M_PI_4 0.78539816339744830962 /* pi/4 */
+#define M_1_PI 0.31830988618379067154 /* 1/pi */
 
 namespace CGL {
 /**

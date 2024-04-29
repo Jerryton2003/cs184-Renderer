@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.8)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 project(Assignment3 LANGUAGES CXX CUDA)
+project(Assignment3 CXX C CUDA)
+#set(CMAKE_CUDA_ARCHITECTURES 52;70;75;86)
 set(CMAKE_CXX_STANDARD 20)
 #-------------------------------------------------------------------------------
 # Build options
