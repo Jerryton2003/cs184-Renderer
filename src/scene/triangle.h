@@ -1,0 +1,59 @@
+
+#ifndef CGL_STATICSCENE_TRIANGLE_H
+#define CGL_STATICSCENE_TRIANGLE_H
+
+#include "object.h"
+#include "primitive.h"
+#include "bbox.h"
+
+namespace CGL { namespace SceneObjects {
+
+/**
+ * A single triangle from a mesh.
+ * To save space, it holds a pointer back to the data in the original mesh
+ * rather than holding the data itself. This means that its lifetime is tied
+ * to that of the original mesh. The primitive may refer back to the mesh
+ * object for other information such as normal, texcoord, material.
+ */
+class Triangle : public Primitive {
+public:
+
+  /**
+   * Constructor.
+   * Construct a mesh triangle with the given indicies into the triangle mesh.
+   * \param mesh pointer to the mesh the triangle is in
+   * \param v1 index of triangle vertex in the mesh's attribute arrays
+   * \param v2 index of triangle vertex in the mesh's attribute arrays
+   * \param v3 index of triangle vertex in the mesh's attribute arrays
+   */
+  Triangle(const Mesh* mesh, size_t v1, size_t v2, size_t v3) {
+    p1 = mesh->positions[v1];
+    p2 = mesh->positions[v2];
+    p3 = mesh->positions[v3];
+    n1 = mesh->normals[v1];
+    n2 = mesh->normals[v2];
+    n3 = mesh->normals[v3];
+    bsdf = mesh->get_bsdf();
+    bbox = BBox(to_double3(p1), to_double3(p2));
+    bbox.expand(to_double3(p3));
+  }
+
+  Triangle() {};
+
+  /**
+   * Get the world space bounding box of the triangle.
+   * \return world space bounding box of the triangle
+   */
+
+  Vector3D p1, p2, p3;
+  Vector3D n1, n2, n3;
+  
+  BSDF* bsdf;
+
+  BBox bbox;
+}; // class Triangle
+
+} // namespace SceneObjects
+} // namespace CGL
+
+#endif //CGL_STATICSCENE_TRIANGLE_H
