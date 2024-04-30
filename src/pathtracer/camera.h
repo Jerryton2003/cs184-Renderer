@@ -144,7 +144,6 @@ class Camera {
   // of view at some distance.
   size_t screenW, screenH;
   double screenDist;
-  int8_t medium_id = -1;
 };
 
 } // namespace CGL

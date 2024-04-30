@@ -13,7 +13,7 @@ set(APPLICATION_3_1_SOURCE
         src/scene/bvh.cu
 
         # Pathtracer
-        src/pathtracer/camera.cpp
+        src/pathtracer/camera.cu
         src/pathtracer/pathtracer.cu
 
         src/scene/shape.h

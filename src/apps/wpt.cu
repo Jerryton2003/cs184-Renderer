@@ -60,13 +60,12 @@ void loadFluid(ObjMesh &mesh, int idx) {
   }
 }
 
-void loadLightning(ObjMesh &mesh, int idx) {
-  std::string filename = lightningRedDir + "lightning_red_" + std::to_string(idx) + ".obj";
-  std::cout << "loading " << filename << std::endl;
-  if (!myLoadObj(filename, &mesh)) {
-    std::cerr << "failed to load " << filename << std::endl;
-    exit(1);
-  }
+double rad(double deg) {
+  return deg / 180.0 * M_PI;
+}
+
+double deg(double rad) {
+  return rad / M_PI * 180.0;
 }
 
 std::unique_ptr<CGL::Camera> hardCodedCamera(int frame_idx) {
@@ -74,44 +73,21 @@ std::unique_ptr<CGL::Camera> hardCodedCamera(int frame_idx) {
   camera->nClip = 0.1;
   camera->fClip = 100;
   camera->hFov = 43.85528;
-  double aspect = 16.0 / 9.0;
-  camera->vFov = 2 * atan(tan(camera->hFov / 2) / aspect);
-  camera->screenW = 1280;
-  camera->screenH = 720;
-  std::cout << camera->screenW << " " << camera->screenH << std::endl;
-  camera->targetPos = make_double3(0.0, 0.0, 0.0);
-
-  std::cout << camera->screenW << " " << camera->screenH << std::endl;
+  double aspect = 1.0;
+  camera->vFov = deg(2 * atan(tan(rad(camera->hFov / 2)) / aspect));
+  printf("vFov: %f\n", camera->vFov);
+  camera->screenW = 480;
+  camera->screenH = 360;
   camera->pos = make_double3(0.2984593, 0.4037158, -0.8174311);
-
-  std::cout << camera->screenW << " " << camera->screenH << std::endl;
   camera->c2w(0, 0) = -0.9995065;
-
-  std::cout << camera->screenW << " " << camera->screenH << std::endl;
   camera->c2w(0, 1) = -2.26441e-4;
-
-  std::cout << camera->screenW << " " << camera->screenH << std::endl;
   camera->c2w(0, 2) = -0.03141583;
-
-  std::cout << camera->screenW << " " << camera->screenH << std::endl;
   camera->c2w(1, 0) = -7.76905e-6;
-
-  std::cout << camera->screenW << " " << camera->screenH << std::endl;
   camera->c2w(1, 1) = 0.9999758;
-
-  std::cout << camera->screenW << " " << camera->screenH << std::endl;
   camera->c2w(1, 2) = -0.006960499;
-
-  std::cout << camera->screenW << " " << camera->screenH << std::endl;
   camera->c2w(2, 0) = 0.03141665;
-
-  std::cout << camera->screenW << " " << camera->screenH << std::endl;
   camera->c2w(2, 1) = -0.006956819;
-
-  std::cout << camera->screenW << " " << camera->screenH << std::endl;
   camera->c2w(2, 2) = -0.9994822;
-  std::cout << camera.get() << std::endl;
-  std::cout << camera->screenW << " " << camera->screenH << std::endl;
   return std::move(camera);
 }
 
@@ -185,8 +161,12 @@ void loadLightning(int frame_idx,
   loadVolume(filepath_red, &volume_red);
   loadVolume(filepath_blue, &volume_blue);
   auto lightning = mixVolumes(volume_red, volume_blue);
+  lightning.orig = centre - make_double3(radius, radius, radius);
+  lightning.spacing = make_double3(2 * radius / lightning.resolution.x,
+                                   2 * radius / lightning.resolution.y,
+                                   2 * radius / lightning.resolution.z);
   addSphere(centre, radius, shapes, materials, material);
-  medium_interface_data.emplace_back(MediumInterfaceData{medium_idx, -1});
+  medium_interface_data.push_back(MediumInterfaceData{medium_idx, -1});
   materials.emplace_back(CGL::Surface{MediumInterface, static_cast<int>(medium_interface_data.size() - 1)});
   Medium medium;
   medium.getHeterogeneousMedium().orig = lightning.orig;
@@ -213,10 +193,10 @@ void addSphereLight(const double3 &centre,
                     double radius,
                     std::vector<CGL::Shape> &shapes,
                     std::vector<CGL::Surface> &materials,
-                    std::vector<int>& host_light_indices,
-                    std::vector<int>& host_light_idx_map,
-                    std::vector<EmissiveData>& emissive_data,
-                    std::vector<double>& weights,
+                    std::vector<int> &host_light_indices,
+                    std::vector<int> &host_light_idx_map,
+                    std::vector<EmissiveData> &emissive_data,
+                    std::vector<double> &weights,
                     int emissive_idx) {
   int pr_id = shapes.size();
   int light_id = host_light_indices.size();
@@ -240,6 +220,7 @@ std::tuple<std::unique_ptr<Scene>,
   std::vector<IsotropicData> host_isotropic_data;
   std::vector<DiffuseData> host_diffuse_data;
   std::vector<EmissiveData> host_emissive_data;
+  std::vector<MediumInterfaceData> host_medium_interface_data;
   std::vector<int> host_light_indices;
   std::vector<int> host_light_idx_map;
   std::vector<double> weights;
@@ -253,9 +234,9 @@ std::tuple<std::unique_ptr<Scene>,
   scene->mesh_pool.vertices = std::vector<CGL::DeviceArray<double3>>(mesh_cnt);
   scene->mesh_pool.normals = std::vector<CGL::DeviceArray<double3>>(mesh_cnt);
   scene->mesh_pool.indices = std::vector<CGL::DeviceArray<uint32_t>>(mesh_cnt);
-  ObjMesh bunny;
-  loadBunny(bunny);
-  addMesh(0, shapes, materials, scene, host_meshes, bunny, {SurfaceInfo::Diffuse, diffuse_bunny});
+//  ObjMesh bunny;
+//  loadBunny(bunny);
+//  addMesh(0, shapes, materials, scene, host_meshes, bunny, {SurfaceInfo::Diffuse, diffuse_bunny});
   ObjMesh fluid;
   loadFluid(fluid, frame_idx);
   addMesh(1, shapes, materials, scene, host_meshes, fluid, CGL::Surface(SurfaceInfo::Diffuse, diffuse_fluid));
@@ -288,7 +269,7 @@ std::tuple<std::unique_ptr<Scene>,
   scene->diffuse_data = std::make_unique<CGL::DeviceArray<DiffuseData>>(host_diffuse_data);
   scene->emissive_data = std::make_unique<CGL::DeviceArray<EmissiveData>>(host_emissive_data);
   scene->media = std::make_unique<CGL::DeviceArray<Medium>>(host_media);
-  scene->medium_interface_data = std::make_unique<CGL::DeviceArray<MediumInterfaceData>>(host_media.size());
+  scene->medium_interface_data = std::make_unique<CGL::DeviceArray<MediumInterfaceData>>(host_medium_interface_data);
   return std::make_tuple(std::move(scene), std::move(shapes), std::move(materials));
 }
 
@@ -299,8 +280,6 @@ int main(int argc, char **argv) {
   }
   int frame_idx = std::stoi(argv[1]);
   auto camera = hardCodedCamera(frame_idx);
-  std::cout << camera.get() << std::endl;
-  std::cout << camera->screenW << " " << camera->screenH << std::endl;
   auto [scene, shapes, materials] = hardCodedScene(frame_idx);
   auto ray_tracer = std::make_unique<CGL::RaytracedRenderer>();
   ray_tracer->set_camera(camera);

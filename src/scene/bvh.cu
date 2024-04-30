@@ -178,21 +178,19 @@ CUDA_HOST void LBVH::build() {
                                                                        rch->constAccessor(),
                                                                        bbox->accessor(),
                                                                        processed->accessor()));
+
   // print the info of the tree into a file
   std::vector<BBox> host_bbox;
-    std::vector<int> host_idx;
-    std::vector<int> host_fa;
-    std::vector<int> host_lch;
-    std::vector<int> host_rch;
-    bbox->copyTo(host_bbox);
-    idx->copyTo(host_idx);
-    fa->copyTo(host_fa);
-    lch->copyTo(host_lch);
-    rch->copyTo(host_rch);
-    std::ofstream fout = std::ofstream("bvh.txt");
-    for (int i = 0; i < primitives->nPrs - 1; i++) {
-      fout << "idx: " << i << ", fa: " << host_fa[i] << ", lch: " << host_lch[i] << ", rch: " << host_rch[i] << ", bbox: " << host_bbox[i] << std::endl;
-    }
-fout.close();
+  std::vector<int> host_idx;
+  std::vector<int> host_fa;
+  std::vector<int> host_lch;
+  std::vector<int> host_rch;
+  bbox->copyTo(host_bbox);
+  idx->copyTo(host_idx);
+  fa->copyTo(host_fa);
+  lch->copyTo(host_lch);
+  rch->copyTo(host_rch);
+  std::ofstream fout = std::ofstream("bvh.txt");
+  fout.close();
 }
 } // namespace CGL

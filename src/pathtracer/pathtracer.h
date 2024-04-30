@@ -70,7 +70,7 @@ class PathTracer {
   // Integrator sampling settings //
   struct Config {
     int num_paths = 1 << 20; // size of path pool
-    int spp = 256;
+    int spp = 32;
     int maxNullCollisions = 1024;
     int width{};
     int height{};
@@ -144,6 +144,7 @@ class PathTracer {
   Timer timer; ///< performance test timer
   std::unique_ptr<Scene> scene{}; ///< current scene
   std::unique_ptr<Camera> camera{}; ///< current camera
+  int camera_medium_id = -1;
 
   // Tonemapping Controls //
 

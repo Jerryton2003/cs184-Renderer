@@ -28,7 +28,7 @@ struct LBVHAccessor {
   ConstDeviceArrayAccessor<int> rch;
   ConstDeviceArrayAccessor<int> idx;
 
-  CUDA_DEVICE [[nodiscard]] CUDA_FORCEINLINE bool isLeaf(int nodeIdx) const {
+  CUDA_DEVICE CUDA_FORCEINLINE bool isLeaf(int nodeIdx) const {
     return nodeIdx >= primitives.nPrs - 1;
   }
 
@@ -83,7 +83,7 @@ struct LBVHAccessor {
     }
   }
 
-  CUDA_DEVICE [[nodiscard]] bool has_intersection(const double3 &o, const double3 &d) const {
+  CUDA_DEVICE bool has_intersection(const double3 &o, const double3 &d) const {
     int stack[64];
     int top{};
     int nodeIdx = 0;

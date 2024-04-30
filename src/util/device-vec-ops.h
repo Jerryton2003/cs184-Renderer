@@ -68,8 +68,6 @@ class Mat3 {
     if (i == 1) return entries[j].y;
     return entries[j].z;
   }
- protected:
-  // column vectors
   double3 entries[3];
 }; // class Matrix3x3
 

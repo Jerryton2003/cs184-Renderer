@@ -17,6 +17,7 @@ namespace CGL {
 struct Sphere {
   double3 center;
   double radius;
+
   CUDA_DEVICE CUDA_FORCEINLINE BBox get_bbox() const {
     return {make_double3(center.x - radius, center.y - radius, center.z - radius),
             make_double3(center.x + radius, center.y + radius, center.z + radius)};
@@ -26,8 +27,9 @@ struct Sphere {
     double a = dot(d, d);
     double b = 2 * dot((o - center), d);
     double c = dot(o - center, o - center) - radius * radius;
-
     double discriminant = b * b - 4 * a * c;
+    if (discriminant < 0)
+      return false;
     double t2 = (-b + sqrt(discriminant)) / (2 * a);
     double t1 = (-b - sqrt(discriminant)) / (2 * a);
     if (t2 >= 0)
@@ -41,24 +43,27 @@ struct Sphere {
                                          const double3 &d,
                                          double3 &isect_n,
                                          double &t) const {
-
-    if (!has_intersection(o, d)) return false;
-
-
     double a = dot(d, d);
     double b = 2 * dot((o - center), d);
-    double c = dot((o - center), (o - center)) - radius * radius;
-
+    double c = dot(o - center, o - center) - radius * radius;
     double discriminant = b * b - 4 * a * c;
-    double t2 = (-b + sqrt(discriminant)) / (2 * a);
-    double t1 = (-b - sqrt(discriminant)) / (2 * a);
-
+    if (discriminant < 0)
+      return false;
+    double t1, t2;
+    if (b >= 0.0) {
+      t1 = (-b - sqrt(discriminant)) / (2 * a);
+      t2 = 2 * c / (-b - sqrt(discriminant));
+    } else {
+      t1 = 2 * c / (-b + sqrt(discriminant));
+      t2 = (-b + sqrt(discriminant)) / (2 * a);
+    }
     if (t2 >= 0)
       t = t2;
     else if (t1 >= 0)
       t = t1;
+    else return false;
     double3 inter = o + t * d;
-    isect_n = normalize(inter - o);
+    isect_n = normalize(inter - center);
     return true;
   }
 
@@ -211,22 +216,25 @@ replace(Triangle)
 #undef UNION_ITEM
 #define SWITCH_CASE_CLAUSE(name) \
 case name##_enum: return item.name##_union.get_bbox();
+
   CUDA_DEVICE CUDA_FORCEINLINE BBox get_bbox() const {
     SWITCH_DESPATCH(SWITCH_CASE_CLAUSE);
-    
+
   }
 
 #undef SWITCH_CASE_CLAUSE
 #define SWITCH_CASE_CLAUSE(name) \
 case name##_enum: return item.name##_union.has_intersection(o, d);
+
   CUDA_DEVICE CUDA_FORCEINLINE bool has_intersection(const double3 &o, const double3 &d) const {
     SWITCH_DESPATCH(SWITCH_CASE_CLAUSE);
-    
+
   }
 
 #undef SWITCH_CASE_CLAUSE
 #define SWITCH_CASE_CLAUSE(name) \
 case name##_enum: return item.name##_union.intersect(o, d, isect_n, t);
+
   CUDA_DEVICE CUDA_FORCEINLINE bool intersect(const double3 &o,
                                               const double3 &d,
                                               double3 &isect_n,
@@ -246,18 +254,20 @@ CUDA_CALLABLE CUDA_FORCEINLINE name& get##name() { type = name##_enum; return it
 
 #define SWITCH_CASE_CLAUSE(name) \
 case name##_enum: return item.name##_union.sample(uv, pdf, normal);
+
   CUDA_DEVICE CUDA_FORCEINLINE double3 sample(const double2 &uv, double *pdf, double3 *normal) const {
     SWITCH_DESPATCH(SWITCH_CASE_CLAUSE);
-    
+
   }
 
 #undef SWITCH_CASE_CLAUSE
 
 #define SWITCH_CASE_CLAUSE(name) \
 case name##_enum: return item.name##_union.pdf(pos);
+
   CUDA_DEVICE CUDA_FORCEINLINE double pdf(const double3 &pos) const {
     SWITCH_DESPATCH(SWITCH_CASE_CLAUSE);
-    
+
   }
 
 #undef SWITCH_DESPATCH

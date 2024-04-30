@@ -48,6 +48,8 @@ PathTracer::PathTracer() {
 
 void PathTracer::set_frame_size(size_t width, size_t height) {
   sampleBuffer.resize(width, height);
+  config.width = width;
+  config.height = height;
 }
 
 void PathTracer::clear() {
@@ -153,6 +155,9 @@ static CUDA_GLOBAL void kernelRayGeneration(int num_paths,
   auto sensor_y = 2 * tan(radians(vFov) / 2) * (y - 0.5);
   double3 sensor_dir = make_double3(sensor_x, sensor_y, -1);
   double3 world_sensor_dir = normalize(cam_to_world * sensor_dir);
+//  atomicAdd(&(kImage[tid].x), sensor_dir.x);
+//  atomicAdd(&(kImage[tid].y), sensor_dir.y);
+//  atomicAdd(&(kImage[tid].z), sensor_dir.z);
   kMatEvalResult[tid] = make_double3(1.0, 1.0, 1.0);
   kMatPdf[tid] = 1.0;
   kOrig[tid] = cam_pos;
@@ -232,9 +237,9 @@ static CUDA_GLOBAL void kernelPathLogic(int num_paths) {
                             (pdf_nee * pdf_nee + pdf_dir * pdf_dir);
         contribution *= mis_weight;
       }
-      atomicAdd(&(kImage[pixel_id].x), static_cast<float>(contribution.x));
-      atomicAdd(&(kImage[pixel_id].y), static_cast<float>(contribution.y));
-      atomicAdd(&(kImage[pixel_id].z), static_cast<float>(contribution.z));
+      atomicAdd(&(kImage[pixel_id].x), contribution.x);
+      atomicAdd(&(kImage[pixel_id].y), contribution.y);
+      atomicAdd(&(kImage[pixel_id].z), contribution.z);
     }
     kScatterType[orig_tid] = surfaceInfo2ScatterType(SurfaceInfo::EnvMap);
     return;
@@ -575,7 +580,7 @@ void PathTracer::shadeScatter(const std::vector<int> &work_sizes,
         camera->pos,
         camera->hFov,
         camera->vFov,
-        camera->medium_id
+        camera_medium_id
     ));
   }
   if (work_sizes[surfaceInfo2ScatterType(SurfaceInfo::Diffuse)] > 0) {
@@ -651,20 +656,20 @@ static CUDA_GLOBAL void kernelSetRng(int num_paths,
 }
 
 void PathTracer::initRng() const {
-//  std::vector<uint64_t> host_seeds(config.num_paths);
-//  for (int i = 0; i < config.num_paths; i++) {
-//    chrono::high_resolution_clock::time_point now = chrono::high_resolution_clock::now();
-//    chrono::nanoseconds ns = chrono::duration_cast<chrono::nanoseconds>(now.time_since_epoch());
-//    host_seeds[i] = ns.count();
-//  }
-//  auto device_seeds = std::make_unique<DeviceArray<uint64_t>>
-//      (host_seeds);
-//  cudaSafeCheck(
-//      kernelSetRng<<<LAUNCH_THREADS(config.num_paths)>>>(
-//          config.num_paths,
-//          rngs->accessor(),
-//          device_seeds->accessor()
-//      ));
+  std::vector<uint64_t> host_seeds(config.num_paths);
+  for (int i = 0; i < config.num_paths; i++) {
+    std::chrono::high_resolution_clock::time_point now = std::chrono::high_resolution_clock::now();
+    std::chrono::nanoseconds ns = std::chrono::duration_cast<std::chrono::nanoseconds>(now.time_since_epoch());
+    host_seeds[i] = ns.count();
+  }
+  auto device_seeds = std::make_unique<DeviceArray<uint64_t>>
+      (host_seeds);
+  cudaSafeCheck(
+      kernelSetRng<<<LAUNCH_THREADS(config.num_paths)>>>(
+          config.num_paths,
+          rngs->accessor(),
+          device_seeds->accessor()
+      ));
 }
 
 #define COPY_TO_CONSTANT(device_array_name, constant_name) \
@@ -715,7 +720,7 @@ void PathTracer::copyToConstantMemory() const {
   COPY_TO_CONSTANT(scene->media, kSceneMediumPool);
   COPY_TO_CONSTANT(scene->phase_functions, kPhaseFunctionPool);
   COPY_TO_CONSTANT(scene->isotropic_data, kIsotropicData);
-//  COPY_TO_CONSTANT(scene->medium_interface_data, kMediumInterfaceData);
+  COPY_TO_CONSTANT(scene->medium_interface_data, kMediumInterfaceData);
   auto lbvh_accessor = lbvh->accessor();
   cudaMemcpyToSymbol(kLBVH, &lbvh_accessor, sizeof(lbvh_accessor));
   auto light_sampler_accessor = scene->light_sampler->accessor();
@@ -723,18 +728,6 @@ void PathTracer::copyToConstantMemory() const {
 }
 
 void PathTracer::raytrace() {
-  std::vector<Medium> host_media(1);
-  host_media[0].getHomogeneousMedium() = HomogeneousMedium(make_double3(0.1, 0.1, 0.1), make_double3(0.1, 0.7, 0.1));
-  scene->media = std::make_unique<DeviceArray<Medium>>(host_media);
-  std::vector<PhaseFunction> host_phase_functions(1);
-  host_phase_functions[0].pf = PhaseFunctions::Isotropic;
-  host_phase_functions[0].pf_id = 0;
-  scene->phase_functions = std::make_unique<DeviceArray<PhaseFunction>>(host_phase_functions);
-  scene->phase_functions->copyFrom(host_phase_functions);
-  std::vector<IsotropicData> host_isotropic_data(1);
-  host_isotropic_data[0].albedo = make_double3(1.0, 1.0, 1.0);
-  scene->isotropic_data = std::make_unique<DeviceArray<IsotropicData>>(host_isotropic_data);
-  camera->medium_id = 0;
   stream = std::make_unique<CudaStream>();
   int rest_samples = static_cast<int>(config.spp * config.width * config.height);
   int current_live_paths = std::min(static_cast<int>(config.num_paths), rest_samples);
@@ -755,7 +748,7 @@ void PathTracer::raytrace() {
       camera->vFov,
       camera->pos,
       camera->c2w,
-      camera->medium_id
+      camera_medium_id
   ));
   std::cout << std::format("Start with {} paths\n", current_live_paths);
   cudaSafeCheck(kernelExtendPath<<<LAUNCH_THREADS(current_live_paths)>>>(
