@@ -26,19 +26,6 @@ set(APPLICATION_3_1_SOURCE
 set(APPLICATION_3_2_SOURCE
         src/scene/object.cpp
 
-        # Collada Parser
-        src/scene/collada/collada.cpp
-        src/scene/collada/camera_info.cpp
-        src/scene/collada/light_info.cpp
-        src/scene/collada/sphere_info.cpp
-        src/scene/collada/polymesh_info.cpp
-        src/scene/collada/material_info.cpp
-
-        # Dynamic Scene
-        src/scene/gl_scene/mesh.cpp
-        src/scene/gl_scene/scene.cpp
-        src/scene/gl_scene/sphere.cpp
-
         # MeshEdit
         src/util/halfEdgeMesh.cpp
 
@@ -62,27 +49,6 @@ set(APPLICATION_3_2_SOURCE
 )
 
 set(APPLICATION_HEADERS
-        # Collada Parser
-        src/scene/collada/camera_info.h
-        src/scene/collada/collada_info.h
-        src/scene/collada/collada.h
-        src/scene/collada/light_info.h
-        src/scene/collada/material_info.h
-        src/scene/collada/polymesh_info.h
-        src/scene/collada/sphere_info.h
-        # Dynamic Scene
-        src/scene/gl_scene/ambient_light.h
-        src/scene/gl_scene/area_light.h
-        src/scene/gl_scene/directional_light.h
-        src/scene/gl_scene/draw_style.h
-        src/scene/gl_scene/environment_light.h
-        src/scene/gl_scene/material.h
-        src/scene/gl_scene/mesh_view.h
-        src/scene/gl_scene/mesh.h
-        src/scene/gl_scene/point_light.h
-        src/scene/gl_scene/scene.h
-        src/scene/gl_scene/sphere.h
-        src/scene/gl_scene/spot_light.h
         # Scene Object & Structure
         src/scene/aggregate.h
         src/scene/bbox.h
@@ -149,10 +115,3 @@ set(OpenGL_GL_PREFERENCE LEGACY)
 find_package(OpenGL REQUIRED)
 target_link_libraries(pt31 PUBLIC OpenGL::GL)
 target_link_libraries(pt31 PUBLIC OpenGL::GLU)
-
-#-------------------------------------------------------------------------------
-# Add subdirectories
-#-------------------------------------------------------------------------------
-
-# Install settings
-set(CMAKE_INSTALL_PREFIX "${Assignment1_SOURCE_DIR}/")

@@ -37,60 +37,6 @@
 },
 {
   "directory": "/home/creeper/cs184-Renderer/cmake-build-debug",
-  "command": "/usr/bin/c++ -DTHRUST_DEVICE_SYSTEM=THRUST_DEVICE_SYSTEM_CUDA -DTHRUST_HOST_SYSTEM=THRUST_HOST_SYSTEM_CPP -I/home/creeper/cs184-Renderer/src -I/home/creeper/cs184-Renderer/CGL/include -I/home/creeper/cs184-Renderer/CGL/deps/glew/include -I/home/creeper/cs184-Renderer/CGL/deps/glfw/include -I/home/creeper/cs184-Renderer/./src/imgui -I/home/creeper/cs184-Renderer/./src/imgui/backends -I/home/creeper/cs184-Renderer/CGL/include/CGL -I/opt/cuda/include  -std=c++11 -m64 -fPIC -O3  -mavx2 -g -std=gnu++20 -fdiagnostics-color=always -o CMakeFiles/pathtracer.dir/src/scene/collada/collada.cpp.o -c /home/creeper/cs184-Renderer/src/scene/collada/collada.cpp",
-  "file": "/home/creeper/cs184-Renderer/src/scene/collada/collada.cpp",
-  "output": "CMakeFiles/pathtracer.dir/src/scene/collada/collada.cpp.o"
-},
-{
-  "directory": "/home/creeper/cs184-Renderer/cmake-build-debug",
-  "command": "/usr/bin/c++ -DTHRUST_DEVICE_SYSTEM=THRUST_DEVICE_SYSTEM_CUDA -DTHRUST_HOST_SYSTEM=THRUST_HOST_SYSTEM_CPP -I/home/creeper/cs184-Renderer/src -I/home/creeper/cs184-Renderer/CGL/include -I/home/creeper/cs184-Renderer/CGL/deps/glew/include -I/home/creeper/cs184-Renderer/CGL/deps/glfw/include -I/home/creeper/cs184-Renderer/./src/imgui -I/home/creeper/cs184-Renderer/./src/imgui/backends -I/home/creeper/cs184-Renderer/CGL/include/CGL -I/opt/cuda/include  -std=c++11 -m64 -fPIC -O3  -mavx2 -g -std=gnu++20 -fdiagnostics-color=always -o CMakeFiles/pathtracer.dir/src/scene/collada/camera_info.cpp.o -c /home/creeper/cs184-Renderer/src/scene/collada/camera_info.cpp",
-  "file": "/home/creeper/cs184-Renderer/src/scene/collada/camera_info.cpp",
-  "output": "CMakeFiles/pathtracer.dir/src/scene/collada/camera_info.cpp.o"
-},
-{
-  "directory": "/home/creeper/cs184-Renderer/cmake-build-debug",
-  "command": "/usr/bin/c++ -DTHRUST_DEVICE_SYSTEM=THRUST_DEVICE_SYSTEM_CUDA -DTHRUST_HOST_SYSTEM=THRUST_HOST_SYSTEM_CPP -I/home/creeper/cs184-Renderer/src -I/home/creeper/cs184-Renderer/CGL/include -I/home/creeper/cs184-Renderer/CGL/deps/glew/include -I/home/creeper/cs184-Renderer/CGL/deps/glfw/include -I/home/creeper/cs184-Renderer/./src/imgui -I/home/creeper/cs184-Renderer/./src/imgui/backends -I/home/creeper/cs184-Renderer/CGL/include/CGL -I/opt/cuda/include  -std=c++11 -m64 -fPIC -O3  -mavx2 -g -std=gnu++20 -fdiagnostics-color=always -o CMakeFiles/pathtracer.dir/src/scene/collada/light_info.cpp.o -c /home/creeper/cs184-Renderer/src/scene/collada/light_info.cpp",
-  "file": "/home/creeper/cs184-Renderer/src/scene/collada/light_info.cpp",
-  "output": "CMakeFiles/pathtracer.dir/src/scene/collada/light_info.cpp.o"
-},
-{
-  "directory": "/home/creeper/cs184-Renderer/cmake-build-debug",
-  "command": "/usr/bin/c++ -DTHRUST_DEVICE_SYSTEM=THRUST_DEVICE_SYSTEM_CUDA -DTHRUST_HOST_SYSTEM=THRUST_HOST_SYSTEM_CPP -I/home/creeper/cs184-Renderer/src -I/home/creeper/cs184-Renderer/CGL/include -I/home/creeper/cs184-Renderer/CGL/deps/glew/include -I/home/creeper/cs184-Renderer/CGL/deps/glfw/include -I/home/creeper/cs184-Renderer/./src/imgui -I/home/creeper/cs184-Renderer/./src/imgui/backends -I/home/creeper/cs184-Renderer/CGL/include/CGL -I/opt/cuda/include  -std=c++11 -m64 -fPIC -O3  -mavx2 -g -std=gnu++20 -fdiagnostics-color=always -o CMakeFiles/pathtracer.dir/src/scene/collada/sphere_info.cpp.o -c /home/creeper/cs184-Renderer/src/scene/collada/sphere_info.cpp",
-  "file": "/home/creeper/cs184-Renderer/src/scene/collada/sphere_info.cpp",
-  "output": "CMakeFiles/pathtracer.dir/src/scene/collada/sphere_info.cpp.o"
-},
-{
-  "directory": "/home/creeper/cs184-Renderer/cmake-build-debug",
-  "command": "/usr/bin/c++ -DTHRUST_DEVICE_SYSTEM=THRUST_DEVICE_SYSTEM_CUDA -DTHRUST_HOST_SYSTEM=THRUST_HOST_SYSTEM_CPP -I/home/creeper/cs184-Renderer/src -I/home/creeper/cs184-Renderer/CGL/include -I/home/creeper/cs184-Renderer/CGL/deps/glew/include -I/home/creeper/cs184-Renderer/CGL/deps/glfw/include -I/home/creeper/cs184-Renderer/./src/imgui -I/home/creeper/cs184-Renderer/./src/imgui/backends -I/home/creeper/cs184-Renderer/CGL/include/CGL -I/opt/cuda/include  -std=c++11 -m64 -fPIC -O3  -mavx2 -g -std=gnu++20 -fdiagnostics-color=always -o CMakeFiles/pathtracer.dir/src/scene/collada/polymesh_info.cpp.o -c /home/creeper/cs184-Renderer/src/scene/collada/polymesh_info.cpp",
-  "file": "/home/creeper/cs184-Renderer/src/scene/collada/polymesh_info.cpp",
-  "output": "CMakeFiles/pathtracer.dir/src/scene/collada/polymesh_info.cpp.o"
-},
-{
-  "directory": "/home/creeper/cs184-Renderer/cmake-build-debug",
-  "command": "/usr/bin/c++ -DTHRUST_DEVICE_SYSTEM=THRUST_DEVICE_SYSTEM_CUDA -DTHRUST_HOST_SYSTEM=THRUST_HOST_SYSTEM_CPP -I/home/creeper/cs184-Renderer/src -I/home/creeper/cs184-Renderer/CGL/include -I/home/creeper/cs184-Renderer/CGL/deps/glew/include -I/home/creeper/cs184-Renderer/CGL/deps/glfw/include -I/home/creeper/cs184-Renderer/./src/imgui -I/home/creeper/cs184-Renderer/./src/imgui/backends -I/home/creeper/cs184-Renderer/CGL/include/CGL -I/opt/cuda/include  -std=c++11 -m64 -fPIC -O3  -mavx2 -g -std=gnu++20 -fdiagnostics-color=always -o CMakeFiles/pathtracer.dir/src/scene/collada/material_info.cpp.o -c /home/creeper/cs184-Renderer/src/scene/collada/material_info.cpp",
-  "file": "/home/creeper/cs184-Renderer/src/scene/collada/material_info.cpp",
-  "output": "CMakeFiles/pathtracer.dir/src/scene/collada/material_info.cpp.o"
-},
-{
-  "directory": "/home/creeper/cs184-Renderer/cmake-build-debug",
-  "command": "/usr/bin/c++ -DTHRUST_DEVICE_SYSTEM=THRUST_DEVICE_SYSTEM_CUDA -DTHRUST_HOST_SYSTEM=THRUST_HOST_SYSTEM_CPP -I/home/creeper/cs184-Renderer/src -I/home/creeper/cs184-Renderer/CGL/include -I/home/creeper/cs184-Renderer/CGL/deps/glew/include -I/home/creeper/cs184-Renderer/CGL/deps/glfw/include -I/home/creeper/cs184-Renderer/./src/imgui -I/home/creeper/cs184-Renderer/./src/imgui/backends -I/home/creeper/cs184-Renderer/CGL/include/CGL -I/opt/cuda/include  -std=c++11 -m64 -fPIC -O3  -mavx2 -g -std=gnu++20 -fdiagnostics-color=always -o CMakeFiles/pathtracer.dir/src/scene/gl_scene/mesh.cpp.o -c /home/creeper/cs184-Renderer/src/scene/gl_scene/mesh.cpp",
-  "file": "/home/creeper/cs184-Renderer/src/scene/gl_scene/mesh.cpp",
-  "output": "CMakeFiles/pathtracer.dir/src/scene/gl_scene/mesh.cpp.o"
-},
-{
-  "directory": "/home/creeper/cs184-Renderer/cmake-build-debug",
-  "command": "/usr/bin/c++ -DTHRUST_DEVICE_SYSTEM=THRUST_DEVICE_SYSTEM_CUDA -DTHRUST_HOST_SYSTEM=THRUST_HOST_SYSTEM_CPP -I/home/creeper/cs184-Renderer/src -I/home/creeper/cs184-Renderer/CGL/include -I/home/creeper/cs184-Renderer/CGL/deps/glew/include -I/home/creeper/cs184-Renderer/CGL/deps/glfw/include -I/home/creeper/cs184-Renderer/./src/imgui -I/home/creeper/cs184-Renderer/./src/imgui/backends -I/home/creeper/cs184-Renderer/CGL/include/CGL -I/opt/cuda/include  -std=c++11 -m64 -fPIC -O3  -mavx2 -g -std=gnu++20 -fdiagnostics-color=always -o CMakeFiles/pathtracer.dir/src/scene/gl_scene/scene.cpp.o -c /home/creeper/cs184-Renderer/src/scene/gl_scene/scene.cpp",
-  "file": "/home/creeper/cs184-Renderer/src/scene/gl_scene/scene.cpp",
-  "output": "CMakeFiles/pathtracer.dir/src/scene/gl_scene/scene.cpp.o"
-},
-{
-  "directory": "/home/creeper/cs184-Renderer/cmake-build-debug",
-  "command": "/usr/bin/c++ -DTHRUST_DEVICE_SYSTEM=THRUST_DEVICE_SYSTEM_CUDA -DTHRUST_HOST_SYSTEM=THRUST_HOST_SYSTEM_CPP -I/home/creeper/cs184-Renderer/src -I/home/creeper/cs184-Renderer/CGL/include -I/home/creeper/cs184-Renderer/CGL/deps/glew/include -I/home/creeper/cs184-Renderer/CGL/deps/glfw/include -I/home/creeper/cs184-Renderer/./src/imgui -I/home/creeper/cs184-Renderer/./src/imgui/backends -I/home/creeper/cs184-Renderer/CGL/include/CGL -I/opt/cuda/include  -std=c++11 -m64 -fPIC -O3  -mavx2 -g -std=gnu++20 -fdiagnostics-color=always -o CMakeFiles/pathtracer.dir/src/scene/gl_scene/sphere.cpp.o -c /home/creeper/cs184-Renderer/src/scene/gl_scene/sphere.cpp",
-  "file": "/home/creeper/cs184-Renderer/src/scene/gl_scene/sphere.cpp",
-  "output": "CMakeFiles/pathtracer.dir/src/scene/gl_scene/sphere.cpp.o"
-},
-{
-  "directory": "/home/creeper/cs184-Renderer/cmake-build-debug",
   "command": "/usr/bin/c++ -DTHRUST_DEVICE_SYSTEM=THRUST_DEVICE_SYSTEM_CUDA -DTHRUST_HOST_SYSTEM=THRUST_HOST_SYSTEM_CPP -I/home/creeper/cs184-Renderer/src -I/home/creeper/cs184-Renderer/CGL/include -I/home/creeper/cs184-Renderer/CGL/deps/glew/include -I/home/creeper/cs184-Renderer/CGL/deps/glfw/include -I/home/creeper/cs184-Renderer/./src/imgui -I/home/creeper/cs184-Renderer/./src/imgui/backends -I/home/creeper/cs184-Renderer/CGL/include/CGL -I/opt/cuda/include  -std=c++11 -m64 -fPIC -O3  -mavx2 -g -std=gnu++20 -fdiagnostics-color=always -o CMakeFiles/pathtracer.dir/src/util/halfEdgeMesh.cpp.o -c /home/creeper/cs184-Renderer/src/util/halfEdgeMesh.cpp",
   "file": "/home/creeper/cs184-Renderer/src/util/halfEdgeMesh.cpp",
   "output": "CMakeFiles/pathtracer.dir/src/util/halfEdgeMesh.cpp.o"

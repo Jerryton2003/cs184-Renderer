@@ -33,10 +33,6 @@ class Camera {
   void place(const Vector3D targetPos, const double phi, const double theta,
              const double r, const double minR, const double maxR);
 
-  string param_string() {
-    return "";
-  }
-
   Camera() = default;
   /*
     Copies just placement data from the other camera.

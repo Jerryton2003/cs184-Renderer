@@ -24,21 +24,6 @@
 
 namespace CGL {
 
-struct WorkItem {
-
-  // Default constructor.
-  WorkItem() : WorkItem(0, 0, 0, 0) { }
-
-  WorkItem(int x, int y, int w, int h)
-      : tile_x(x), tile_y(y), tile_w(w), tile_h(h) {}
-
-  int tile_x;
-  int tile_y;
-  int tile_w;
-  int tile_h;
-
-};
-
 /**
  * A pathtracer with BVH accelerator and BVH visualization capabilities.
  * It is always in exactly one of the following states:
@@ -49,23 +34,23 @@ struct WorkItem {
  * -> DONE: completed rendering a scene.
  */
 class RaytracedRenderer {
-public:
+ public:
 
   /**
    * Default constructor.
    * Creates a new pathtracer instance.
    */
   explicit RaytracedRenderer(size_t ns_aa = 1,
-             size_t max_ray_depth = 4, bool is_accumulate_bounces =false, size_t ns_area_light = 1,
-             size_t ns_diff = 1, size_t ns_glsy = 1, size_t ns_refr = 1,
-             size_t num_threads = 1,
-             size_t samples_per_batch = 32,
-             float max_tolerance = 0.05f,
-             HDRImageBuffer* envmap = NULL,
-             bool direct_hemisphere_sample = false,
-             string filename = "",
-             double lensRadius = 0.25,
-             double focalDistance = 4.7);
+                             size_t max_ray_depth = 4, bool is_accumulate_bounces = false, size_t ns_area_light = 1,
+                             size_t ns_diff = 1, size_t ns_glsy = 1, size_t ns_refr = 1,
+                             size_t num_threads = 1,
+                             size_t samples_per_batch = 32,
+                             float max_tolerance = 0.05f,
+                             HDRImageBuffer *envmap = NULL,
+                             bool direct_hemisphere_sample = false,
+                             string filename = "",
+                             double lensRadius = 0.25,
+                             double focalDistance = 4.7);
 
   /**
    * Destructor.
@@ -76,43 +61,34 @@ public:
   void clear();
 
   /**
-   * If the pathtracer is in READY, transition to VISUALIZE.
-   */
-  void start_visualizing();
-
-  /**
    * If the pathtracer is in READY, transition to RENDERING.
    */
   void start_raytracing();
 
-  void render_to_file(std::string filename, size_t x, size_t y, size_t dx, size_t dy);
+  void render_to_file(const std::string &filename);
 
   /**
    * Save rendered result to png file.
    */
-  void save_image(std::string filename="", ImageBuffer* buffer=NULL);
+  void save_image(std::string filename = "", ImageBuffer *buffer = NULL);
 
-  /**
-   * Save sampling rates to png file.
-   */
-   void save_sampling_rate_image(std::string filename) {
-     // do nothing
-   }
+  void set_camera(std::unique_ptr<Camera> &camera_);
+
  private:
 
-  void build_accel(SceneObjects::Scene* scene);
+  void build_accel(int pr_cnt,
+                   const std::vector<Shape> &shapes,
+                   const std::vector<Surface> &materials);
 
-  std::unique_ptr<PathTracer> pt;
+  std::unique_ptr<PathTracer> pt{};
 
   // Configurables //
 
-  std::unique_ptr<LBVH> lbvh;           ///< LBVH accelerator
-  std::unique_ptr<Scene> scene;         ///< current scene
-  std::unique_ptr<Camera> camera;       ///< current camera
+  std::unique_ptr<LBVH> lbvh{};           ///< LBVH accelerator
+  std::unique_ptr<Scene> scene{};         ///< current scene
+  std::unique_ptr<Camera> camera{};       ///< current camera
 
   // Integration state //
-
-  vector<int> tile_samples; ///< current sample rate for tile
 
   size_t frame_w, frame_h;
 

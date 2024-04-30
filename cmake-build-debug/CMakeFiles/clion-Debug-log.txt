@@ -16,7 +16,7 @@ CMake Deprecation Warning at CGL/deps/glfw/CMakeLists.txt:1 (cmake_minimum_requi
 
 
 -- Using X11 for window creation
--- Configuring done (0.3s)
+-- Configuring done (0.2s)
 CMake Warning (dev) in CMakeLists.txt:
   Policy CMP0104 is not set: CMAKE_CUDA_ARCHITECTURES now detected for NVCC,
   empty CUDA_ARCHITECTURES not allowed.  Run "cmake --help-policy CMP0104"

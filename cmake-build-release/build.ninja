@@ -126,78 +126,6 @@ build CMakeFiles/pathtracer.dir/src/scene/object.cpp.o: CXX_COMPILER__pathtracer
   OBJECT_DIR = CMakeFiles/pathtracer.dir
   OBJECT_FILE_DIR = CMakeFiles/pathtracer.dir/src/scene
 
-build CMakeFiles/pathtracer.dir/src/scene/collada/collada.cpp.o: CXX_COMPILER__pathtracer_unscanned_Release /home/creeper/cs184-Renderer/src/scene/collada/collada.cpp || cmake_object_order_depends_target_pathtracer
-  DEFINES = -DTHRUST_DEVICE_SYSTEM=THRUST_DEVICE_SYSTEM_CUDA -DTHRUST_HOST_SYSTEM=THRUST_HOST_SYSTEM_CPP
-  DEP_FILE = CMakeFiles/pathtracer.dir/src/scene/collada/collada.cpp.o.d
-  FLAGS = -std=c++11 -m64 -fPIC -O3  -mavx2 -O3 -DNDEBUG -std=gnu++20 -fdiagnostics-color=always
-  INCLUDES = -I/home/creeper/cs184-Renderer/src -I/home/creeper/cs184-Renderer/CGL/include -I/home/creeper/cs184-Renderer/CGL/deps/glew/include -I/home/creeper/cs184-Renderer/CGL/deps/glfw/include -I/home/creeper/cs184-Renderer/./src/imgui -I/home/creeper/cs184-Renderer/./src/imgui/backends -I/home/creeper/cs184-Renderer/CGL/include/CGL -I/opt/cuda/include
-  OBJECT_DIR = CMakeFiles/pathtracer.dir
-  OBJECT_FILE_DIR = CMakeFiles/pathtracer.dir/src/scene/collada
-
-build CMakeFiles/pathtracer.dir/src/scene/collada/camera_info.cpp.o: CXX_COMPILER__pathtracer_unscanned_Release /home/creeper/cs184-Renderer/src/scene/collada/camera_info.cpp || cmake_object_order_depends_target_pathtracer
-  DEFINES = -DTHRUST_DEVICE_SYSTEM=THRUST_DEVICE_SYSTEM_CUDA -DTHRUST_HOST_SYSTEM=THRUST_HOST_SYSTEM_CPP
-  DEP_FILE = CMakeFiles/pathtracer.dir/src/scene/collada/camera_info.cpp.o.d
-  FLAGS = -std=c++11 -m64 -fPIC -O3  -mavx2 -O3 -DNDEBUG -std=gnu++20 -fdiagnostics-color=always
-  INCLUDES = -I/home/creeper/cs184-Renderer/src -I/home/creeper/cs184-Renderer/CGL/include -I/home/creeper/cs184-Renderer/CGL/deps/glew/include -I/home/creeper/cs184-Renderer/CGL/deps/glfw/include -I/home/creeper/cs184-Renderer/./src/imgui -I/home/creeper/cs184-Renderer/./src/imgui/backends -I/home/creeper/cs184-Renderer/CGL/include/CGL -I/opt/cuda/include
-  OBJECT_DIR = CMakeFiles/pathtracer.dir
-  OBJECT_FILE_DIR = CMakeFiles/pathtracer.dir/src/scene/collada
-
-build CMakeFiles/pathtracer.dir/src/scene/collada/light_info.cpp.o: CXX_COMPILER__pathtracer_unscanned_Release /home/creeper/cs184-Renderer/src/scene/collada/light_info.cpp || cmake_object_order_depends_target_pathtracer
-  DEFINES = -DTHRUST_DEVICE_SYSTEM=THRUST_DEVICE_SYSTEM_CUDA -DTHRUST_HOST_SYSTEM=THRUST_HOST_SYSTEM_CPP
-  DEP_FILE = CMakeFiles/pathtracer.dir/src/scene/collada/light_info.cpp.o.d
-  FLAGS = -std=c++11 -m64 -fPIC -O3  -mavx2 -O3 -DNDEBUG -std=gnu++20 -fdiagnostics-color=always
-  INCLUDES = -I/home/creeper/cs184-Renderer/src -I/home/creeper/cs184-Renderer/CGL/include -I/home/creeper/cs184-Renderer/CGL/deps/glew/include -I/home/creeper/cs184-Renderer/CGL/deps/glfw/include -I/home/creeper/cs184-Renderer/./src/imgui -I/home/creeper/cs184-Renderer/./src/imgui/backends -I/home/creeper/cs184-Renderer/CGL/include/CGL -I/opt/cuda/include
-  OBJECT_DIR = CMakeFiles/pathtracer.dir
-  OBJECT_FILE_DIR = CMakeFiles/pathtracer.dir/src/scene/collada
-
-build CMakeFiles/pathtracer.dir/src/scene/collada/sphere_info.cpp.o: CXX_COMPILER__pathtracer_unscanned_Release /home/creeper/cs184-Renderer/src/scene/collada/sphere_info.cpp || cmake_object_order_depends_target_pathtracer
-  DEFINES = -DTHRUST_DEVICE_SYSTEM=THRUST_DEVICE_SYSTEM_CUDA -DTHRUST_HOST_SYSTEM=THRUST_HOST_SYSTEM_CPP
-  DEP_FILE = CMakeFiles/pathtracer.dir/src/scene/collada/sphere_info.cpp.o.d
-  FLAGS = -std=c++11 -m64 -fPIC -O3  -mavx2 -O3 -DNDEBUG -std=gnu++20 -fdiagnostics-color=always
-  INCLUDES = -I/home/creeper/cs184-Renderer/src -I/home/creeper/cs184-Renderer/CGL/include -I/home/creeper/cs184-Renderer/CGL/deps/glew/include -I/home/creeper/cs184-Renderer/CGL/deps/glfw/include -I/home/creeper/cs184-Renderer/./src/imgui -I/home/creeper/cs184-Renderer/./src/imgui/backends -I/home/creeper/cs184-Renderer/CGL/include/CGL -I/opt/cuda/include
-  OBJECT_DIR = CMakeFiles/pathtracer.dir
-  OBJECT_FILE_DIR = CMakeFiles/pathtracer.dir/src/scene/collada
-
-build CMakeFiles/pathtracer.dir/src/scene/collada/polymesh_info.cpp.o: CXX_COMPILER__pathtracer_unscanned_Release /home/creeper/cs184-Renderer/src/scene/collada/polymesh_info.cpp || cmake_object_order_depends_target_pathtracer
-  DEFINES = -DTHRUST_DEVICE_SYSTEM=THRUST_DEVICE_SYSTEM_CUDA -DTHRUST_HOST_SYSTEM=THRUST_HOST_SYSTEM_CPP
-  DEP_FILE = CMakeFiles/pathtracer.dir/src/scene/collada/polymesh_info.cpp.o.d
-  FLAGS = -std=c++11 -m64 -fPIC -O3  -mavx2 -O3 -DNDEBUG -std=gnu++20 -fdiagnostics-color=always
-  INCLUDES = -I/home/creeper/cs184-Renderer/src -I/home/creeper/cs184-Renderer/CGL/include -I/home/creeper/cs184-Renderer/CGL/deps/glew/include -I/home/creeper/cs184-Renderer/CGL/deps/glfw/include -I/home/creeper/cs184-Renderer/./src/imgui -I/home/creeper/cs184-Renderer/./src/imgui/backends -I/home/creeper/cs184-Renderer/CGL/include/CGL -I/opt/cuda/include
-  OBJECT_DIR = CMakeFiles/pathtracer.dir
-  OBJECT_FILE_DIR = CMakeFiles/pathtracer.dir/src/scene/collada
-
-build CMakeFiles/pathtracer.dir/src/scene/collada/material_info.cpp.o: CXX_COMPILER__pathtracer_unscanned_Release /home/creeper/cs184-Renderer/src/scene/collada/material_info.cpp || cmake_object_order_depends_target_pathtracer
-  DEFINES = -DTHRUST_DEVICE_SYSTEM=THRUST_DEVICE_SYSTEM_CUDA -DTHRUST_HOST_SYSTEM=THRUST_HOST_SYSTEM_CPP
-  DEP_FILE = CMakeFiles/pathtracer.dir/src/scene/collada/material_info.cpp.o.d
-  FLAGS = -std=c++11 -m64 -fPIC -O3  -mavx2 -O3 -DNDEBUG -std=gnu++20 -fdiagnostics-color=always
-  INCLUDES = -I/home/creeper/cs184-Renderer/src -I/home/creeper/cs184-Renderer/CGL/include -I/home/creeper/cs184-Renderer/CGL/deps/glew/include -I/home/creeper/cs184-Renderer/CGL/deps/glfw/include -I/home/creeper/cs184-Renderer/./src/imgui -I/home/creeper/cs184-Renderer/./src/imgui/backends -I/home/creeper/cs184-Renderer/CGL/include/CGL -I/opt/cuda/include
-  OBJECT_DIR = CMakeFiles/pathtracer.dir
-  OBJECT_FILE_DIR = CMakeFiles/pathtracer.dir/src/scene/collada
-
-build CMakeFiles/pathtracer.dir/src/scene/gl_scene/mesh.cpp.o: CXX_COMPILER__pathtracer_unscanned_Release /home/creeper/cs184-Renderer/src/scene/gl_scene/mesh.cpp || cmake_object_order_depends_target_pathtracer
-  DEFINES = -DTHRUST_DEVICE_SYSTEM=THRUST_DEVICE_SYSTEM_CUDA -DTHRUST_HOST_SYSTEM=THRUST_HOST_SYSTEM_CPP
-  DEP_FILE = CMakeFiles/pathtracer.dir/src/scene/gl_scene/mesh.cpp.o.d
-  FLAGS = -std=c++11 -m64 -fPIC -O3  -mavx2 -O3 -DNDEBUG -std=gnu++20 -fdiagnostics-color=always
-  INCLUDES = -I/home/creeper/cs184-Renderer/src -I/home/creeper/cs184-Renderer/CGL/include -I/home/creeper/cs184-Renderer/CGL/deps/glew/include -I/home/creeper/cs184-Renderer/CGL/deps/glfw/include -I/home/creeper/cs184-Renderer/./src/imgui -I/home/creeper/cs184-Renderer/./src/imgui/backends -I/home/creeper/cs184-Renderer/CGL/include/CGL -I/opt/cuda/include
-  OBJECT_DIR = CMakeFiles/pathtracer.dir
-  OBJECT_FILE_DIR = CMakeFiles/pathtracer.dir/src/scene/gl_scene
-
-build CMakeFiles/pathtracer.dir/src/scene/gl_scene/scene.cpp.o: CXX_COMPILER__pathtracer_unscanned_Release /home/creeper/cs184-Renderer/src/scene/gl_scene/scene.cpp || cmake_object_order_depends_target_pathtracer
-  DEFINES = -DTHRUST_DEVICE_SYSTEM=THRUST_DEVICE_SYSTEM_CUDA -DTHRUST_HOST_SYSTEM=THRUST_HOST_SYSTEM_CPP
-  DEP_FILE = CMakeFiles/pathtracer.dir/src/scene/gl_scene/scene.cpp.o.d
-  FLAGS = -std=c++11 -m64 -fPIC -O3  -mavx2 -O3 -DNDEBUG -std=gnu++20 -fdiagnostics-color=always
-  INCLUDES = -I/home/creeper/cs184-Renderer/src -I/home/creeper/cs184-Renderer/CGL/include -I/home/creeper/cs184-Renderer/CGL/deps/glew/include -I/home/creeper/cs184-Renderer/CGL/deps/glfw/include -I/home/creeper/cs184-Renderer/./src/imgui -I/home/creeper/cs184-Renderer/./src/imgui/backends -I/home/creeper/cs184-Renderer/CGL/include/CGL -I/opt/cuda/include
-  OBJECT_DIR = CMakeFiles/pathtracer.dir
-  OBJECT_FILE_DIR = CMakeFiles/pathtracer.dir/src/scene/gl_scene
-
-build CMakeFiles/pathtracer.dir/src/scene/gl_scene/sphere.cpp.o: CXX_COMPILER__pathtracer_unscanned_Release /home/creeper/cs184-Renderer/src/scene/gl_scene/sphere.cpp || cmake_object_order_depends_target_pathtracer
-  DEFINES = -DTHRUST_DEVICE_SYSTEM=THRUST_DEVICE_SYSTEM_CUDA -DTHRUST_HOST_SYSTEM=THRUST_HOST_SYSTEM_CPP
-  DEP_FILE = CMakeFiles/pathtracer.dir/src/scene/gl_scene/sphere.cpp.o.d
-  FLAGS = -std=c++11 -m64 -fPIC -O3  -mavx2 -O3 -DNDEBUG -std=gnu++20 -fdiagnostics-color=always
-  INCLUDES = -I/home/creeper/cs184-Renderer/src -I/home/creeper/cs184-Renderer/CGL/include -I/home/creeper/cs184-Renderer/CGL/deps/glew/include -I/home/creeper/cs184-Renderer/CGL/deps/glfw/include -I/home/creeper/cs184-Renderer/./src/imgui -I/home/creeper/cs184-Renderer/./src/imgui/backends -I/home/creeper/cs184-Renderer/CGL/include/CGL -I/opt/cuda/include
-  OBJECT_DIR = CMakeFiles/pathtracer.dir
-  OBJECT_FILE_DIR = CMakeFiles/pathtracer.dir/src/scene/gl_scene
-
 build CMakeFiles/pathtracer.dir/src/util/halfEdgeMesh.cpp.o: CXX_COMPILER__pathtracer_unscanned_Release /home/creeper/cs184-Renderer/src/util/halfEdgeMesh.cpp || cmake_object_order_depends_target_pathtracer
   DEFINES = -DTHRUST_DEVICE_SYSTEM=THRUST_DEVICE_SYSTEM_CUDA -DTHRUST_HOST_SYSTEM=THRUST_HOST_SYSTEM_CPP
   DEP_FILE = CMakeFiles/pathtracer.dir/src/util/halfEdgeMesh.cpp.o.d
@@ -286,7 +214,7 @@ build CMakeFiles/pathtracer.dir/src/util/obj-io.cc.o: CXX_COMPILER__pathtracer_u
 #############################################
 # Link the executable pathtracer
 
-build pathtracer: CXX_EXECUTABLE_LINKER__pathtracer_Release CMakeFiles/pathtracer.dir/src/scene/object.cpp.o CMakeFiles/pathtracer.dir/src/scene/collada/collada.cpp.o CMakeFiles/pathtracer.dir/src/scene/collada/camera_info.cpp.o CMakeFiles/pathtracer.dir/src/scene/collada/light_info.cpp.o CMakeFiles/pathtracer.dir/src/scene/collada/sphere_info.cpp.o CMakeFiles/pathtracer.dir/src/scene/collada/polymesh_info.cpp.o CMakeFiles/pathtracer.dir/src/scene/collada/material_info.cpp.o CMakeFiles/pathtracer.dir/src/scene/gl_scene/mesh.cpp.o CMakeFiles/pathtracer.dir/src/scene/gl_scene/scene.cpp.o CMakeFiles/pathtracer.dir/src/scene/gl_scene/sphere.cpp.o CMakeFiles/pathtracer.dir/src/util/halfEdgeMesh.cpp.o CMakeFiles/pathtracer.dir/src/pathtracer/sampler.cu.o CMakeFiles/pathtracer.dir/src/pathtracer/advanced_bsdf.cpp.o CMakeFiles/pathtracer.dir/src/pathtracer/camera_lens.cpp.o CMakeFiles/pathtracer.dir/src/pathtracer/raytraced_renderer.cpp.o CMakeFiles/pathtracer.dir/src/util/sphere_drawing.cpp.o CMakeFiles/pathtracer.dir/src/util/lodepng.cpp.o CMakeFiles/pathtracer.dir/src/util/image.cu.o CMakeFiles/pathtracer.dir/src/apps/wpt.cu.o CMakeFiles/pathtracer.dir/src/util/obj-io.cc.o | libpt31.so CGL/libCGL.a /usr/lib/libfreetype.so CGL/deps/glew/libglew.a CGL/deps/glfw/src/libglfw3.a /usr/lib/librt.a /usr/lib/libm.so /usr/lib/libGL.so /usr/lib/libGLU.so /usr/lib/libGL.so || CGL/deps/glew/libglew.a CGL/deps/glfw/src/libglfw3.a CGL/libCGL.a libpt31.so
+build pathtracer: CXX_EXECUTABLE_LINKER__pathtracer_Release CMakeFiles/pathtracer.dir/src/scene/object.cpp.o CMakeFiles/pathtracer.dir/src/util/halfEdgeMesh.cpp.o CMakeFiles/pathtracer.dir/src/pathtracer/sampler.cu.o CMakeFiles/pathtracer.dir/src/pathtracer/advanced_bsdf.cpp.o CMakeFiles/pathtracer.dir/src/pathtracer/camera_lens.cpp.o CMakeFiles/pathtracer.dir/src/pathtracer/raytraced_renderer.cpp.o CMakeFiles/pathtracer.dir/src/util/sphere_drawing.cpp.o CMakeFiles/pathtracer.dir/src/util/lodepng.cpp.o CMakeFiles/pathtracer.dir/src/util/image.cu.o CMakeFiles/pathtracer.dir/src/apps/wpt.cu.o CMakeFiles/pathtracer.dir/src/util/obj-io.cc.o | libpt31.so CGL/libCGL.a /usr/lib/libfreetype.so CGL/deps/glew/libglew.a CGL/deps/glfw/src/libglfw3.a /usr/lib/librt.a /usr/lib/libm.so /usr/lib/libGL.so /usr/lib/libGLU.so /usr/lib/libGL.so || CGL/deps/glew/libglew.a CGL/deps/glfw/src/libglfw3.a CGL/libCGL.a libpt31.so
   FLAGS = -std=c++11 -m64 -fPIC -O3  -mavx2 -O3 -DNDEBUG
   LINK_LIBRARIES = -Wl,-rpath,/home/creeper/cs184-Renderer/cmake-build-release  libpt31.so  CGL/libCGL.a  /usr/lib/libfreetype.so  CGL/deps/glew/libglew.a  CGL/deps/glfw/src/libglfw3.a  /usr/lib/librt.a  -lm  -ldl  /usr/lib/libGL.so  /usr/lib/libGLU.so  /usr/lib/libGL.so  -lcudadevrt  -lcudart_static  -lrt  -lpthread  -ldl
   LINK_PATH = -L/opt/cuda/targets/x86_64-linux/lib/stubs   -L/opt/cuda/targets/x86_64-linux/lib

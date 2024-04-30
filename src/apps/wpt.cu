@@ -4,16 +4,23 @@
 #include <iostream>
 #include <scene/scene.h>
 #include "pathtracer/camera.h"
-
+#include "scene/shape.h"
+#include "scene/primitive.h"
+#include <tuple>
 
 std::unique_ptr<CGL::Camera> hardCodedCamera(int frame_idx) {
   auto camera = std::make_unique<CGL::Camera>();
+  camera->nClip = 0.1;
+    camera->fClip = 100;
 
 }
 
-std::unique_ptr<CGL::Scene> hardCodedScene(int frame_idx) {
+std::tuple<std::unique_ptr<CGL::Scene>, std::vector<CGL::Shape>, std::vector<CGL::Surface>> hardCodedScene(int frame_idx) {
   auto scene = std::make_unique<CGL::Scene>();
+  std::vector<CGL::Shape> shapes;
+  std::vector<CGL::Surface> materials;
 
+  return std::make_tuple(std::move(scene), std::move(shapes), std::move(materials));
 }
 
 int main(int argc, char **argv) {
