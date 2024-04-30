@@ -84,10 +84,10 @@ void Camera::set_screen_size(const size_t screenW, const size_t screenH) {
  */
 void Camera::move_by(const double dx, const double dy, const double d) {
   const double scaleFactor = d / screenDist;
-  const Vector3D displacement =
-    c2w[0] * (dx * scaleFactor) + c2w[1] * (dy * scaleFactor);
-  pos = pos + to_double3(displacement);
-  targetPos = targetPos + to_double3(displacement);
+//  const Vector3D displacement =
+//    c2w[0] * (dx * scaleFactor) + c2w[1] * (dy * scaleFactor);
+//  pos = pos + to_double3(displacement);
+//  targetPos = targetPos + to_double3(displacement);
 }
 
 /**
@@ -127,9 +127,9 @@ void Camera::compute_position() {
   Vector3D screenYDir = cross(dirToCamera, screenXDir);
   screenYDir.normalize();
 
-  c2w[0] = screenXDir;
-  c2w[1] = screenYDir;
-  c2w[2] = dirToCamera.unit();   // camera's view direction is the
+//  c2w[0] = screenXDir;
+//  c2w[1] = screenYDir;
+//  c2w[2] = dirToCamera.unit();   // camera's view direction is the
                                  // opposite of of dirToCamera, so
                                  // directly using dirToCamera as
                                  // column 2 of the matrix takes [0 0 -1]

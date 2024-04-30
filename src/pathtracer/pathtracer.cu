@@ -10,44 +10,43 @@
 
 namespace CGL {
 PathTracer::PathTracer() {
-//  path_pool.orig = std::make_unique<DeviceArray<double3>>(config.num_paths);
-//  path_pool.dir = std::make_unique<DeviceArray<double3>>(config.num_paths);
-//  path_pool.throughput = std::make_unique<DeviceArray<double3>>(config.num_paths);
-//  path_pool.indices = std::make_unique<DeviceArray<int>>(config.num_paths);
-//  interaction_pool.n = std::make_unique<DeviceArray<double3>>(config.num_paths);
-//  interaction_pool.t = std::make_unique<DeviceArray<double>>(config.num_paths);
-//  path_pool.scatter_type = std::make_unique<DeviceArray<int>>(config.num_paths);
-//  interaction_pool.primitive_id = std::make_unique<DeviceArray<int>>(config.num_paths);
-//  interaction_pool.mat_id = std::make_unique<DeviceArray<int>>(config.num_paths);
-//  interaction_pool.is_intersected = std::make_unique<DeviceArray<bool>>(config.num_paths);
-//  nee_path_pool.nee_pdf_light = std::make_unique<DeviceArray<double>>(config.num_paths);
-//  nee_path_pool.nee_pos = std::make_unique<DeviceArray<double3>>(config.num_paths);
-//  nee_path_pool.nee_light_id = std::make_unique<DeviceArray<int>>(config.num_paths);
-//  nee_path_pool.nee_mat_pdf = std::make_unique<DeviceArray<double>>(config.num_paths);
-//  path_pool.mat_pdf = std::make_unique<DeviceArray<double>>(config.num_paths);
-//  path_pool.mat_eval_result = std::make_unique<DeviceArray<double3>>(config.num_paths);
-//  nee_path_pool.nee_dir = std::make_unique<DeviceArray<double3>>(config.num_paths);
-//  nee_path_pool.nee_t = std::make_unique<DeviceArray<double>>(config.num_paths);
-//  nee_path_pool.nee_light_normal = std::make_unique<DeviceArray<double3>>(config.num_paths);
-//  nee_path_pool.nee_pos_cache = std::make_unique<DeviceArray<double3>>(config.num_paths);
-//  nee_path_pool.nee_throughput = std::make_unique<DeviceArray<double3>>(config.num_paths);
-//  nee_path_pool.nee_medium_id = std::make_unique<DeviceArray<int8_t>>(config.num_paths);
-//  path_pool.depth = std::make_unique<DeviceArray<int>>(config.num_paths);
-//  path_pool.medium_id = std::make_unique<DeviceArray<int8_t>>(config.num_paths);
-//  path_pool.pdf_delta = std::make_unique<DeviceArray<double>>(config.num_paths);
-//  path_pool.pdf_ratio = std::make_unique<DeviceArray<double>>(config.num_paths);
-//  rngs = std::make_unique<DeviceArray<RandomGenerator>>(config.num_paths);
-//  work_pool = std::make_unique<MultipleWorkPool>(
-//      static_cast<int>(SurfaceInfo::NumSurfaceInfos) + static_cast<int>(PhaseFunctions::NumPhaseFunctions),
-//      config.num_paths);
-//  ray_keys = std::make_unique<DeviceArray<uint64_t>>(config.num_paths);
+  path_pool.orig = std::make_unique<DeviceArray<double3>>(config.num_paths);
+  path_pool.dir = std::make_unique<DeviceArray<double3>>(config.num_paths);
+  path_pool.throughput = std::make_unique<DeviceArray<double3>>(config.num_paths);
+  path_pool.indices = std::make_unique<DeviceArray<int>>(config.num_paths);
+  interaction_pool.n = std::make_unique<DeviceArray<double3>>(config.num_paths);
+  interaction_pool.t = std::make_unique<DeviceArray<double>>(config.num_paths);
+  path_pool.scatter_type = std::make_unique<DeviceArray<int>>(config.num_paths);
+  interaction_pool.primitive_id = std::make_unique<DeviceArray<int>>(config.num_paths);
+  interaction_pool.mat_id = std::make_unique<DeviceArray<int>>(config.num_paths);
+  interaction_pool.is_intersected = std::make_unique<DeviceArray<bool>>(config.num_paths);
+  nee_path_pool.nee_pdf_light = std::make_unique<DeviceArray<double>>(config.num_paths);
+  nee_path_pool.nee_pos = std::make_unique<DeviceArray<double3>>(config.num_paths);
+  nee_path_pool.nee_light_id = std::make_unique<DeviceArray<int>>(config.num_paths);
+  nee_path_pool.nee_mat_pdf = std::make_unique<DeviceArray<double>>(config.num_paths);
+  path_pool.mat_pdf = std::make_unique<DeviceArray<double>>(config.num_paths);
+  path_pool.mat_eval_result = std::make_unique<DeviceArray<double3>>(config.num_paths);
+  nee_path_pool.nee_dir = std::make_unique<DeviceArray<double3>>(config.num_paths);
+  nee_path_pool.nee_t = std::make_unique<DeviceArray<double>>(config.num_paths);
+  nee_path_pool.nee_light_normal = std::make_unique<DeviceArray<double3>>(config.num_paths);
+  nee_path_pool.nee_pos_cache = std::make_unique<DeviceArray<double3>>(config.num_paths);
+  nee_path_pool.nee_throughput = std::make_unique<DeviceArray<double3>>(config.num_paths);
+  nee_path_pool.nee_medium_id = std::make_unique<DeviceArray<int8_t>>(config.num_paths);
+  path_pool.depth = std::make_unique<DeviceArray<int>>(config.num_paths);
+  path_pool.medium_id = std::make_unique<DeviceArray<int8_t>>(config.num_paths);
+  path_pool.pdf_delta = std::make_unique<DeviceArray<double>>(config.num_paths);
+  path_pool.pdf_ratio = std::make_unique<DeviceArray<double>>(config.num_paths);
+  rngs = std::make_unique<DeviceArray<RandomGenerator>>(config.num_paths);
+  work_pool = std::make_unique<MultipleWorkPool>(
+      static_cast<int>(SurfaceInfo::NumSurfaceInfos) + static_cast<int>(PhaseFunctions::NumPhaseFunctions),
+      config.num_paths);
+  ray_keys = std::make_unique<DeviceArray<uint64_t>>(config.num_paths);
   tm_level = 1.0f;
   tm_key = 0.18;
   tm_wht = 5.0f;
 }
 
 void PathTracer::set_frame_size(size_t width, size_t height) {
-  cudaSafeCheck();
   sampleBuffer.resize(width, height);
 }
 
@@ -572,7 +571,7 @@ void PathTracer::shadeScatter(const std::vector<int> &work_sizes,
         num_new_paths,
         total_samples,
         start[surfaceInfo2ScatterType(SurfaceInfo::EnvMap)],
-        to_Mat3(camera->c2w),
+        camera->c2w,
         camera->pos,
         camera->hFov,
         camera->vFov,
@@ -738,7 +737,7 @@ void PathTracer::raytrace() {
   camera->medium_id = 0;
   stream = std::make_unique<CudaStream>();
   int rest_samples = static_cast<int>(config.spp * config.width * config.height);
-  int current_live_paths = min(rest_samples, config.num_paths);
+  int current_live_paths = std::min(static_cast<int>(config.num_paths), rest_samples);
   int total_samples = 0;
   config.width = static_cast<int>(sampleBuffer.w);
   config.height = static_cast<int>(sampleBuffer.h);
@@ -755,7 +754,7 @@ void PathTracer::raytrace() {
       camera->hFov,
       camera->vFov,
       camera->pos,
-      to_Mat3(camera->c2w),
+      camera->c2w,
       camera->medium_id
   ));
   std::cout << std::format("Start with {} paths\n", current_live_paths);

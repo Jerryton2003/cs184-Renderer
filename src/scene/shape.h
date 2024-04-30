@@ -11,17 +11,18 @@
 #include "../util/device-utils.h"
 #include "../util/device-vec-ops.h"
 #include <algorithm>
+#include "bbox.h"
 
 namespace CGL {
 struct Sphere {
   double3 center;
   double radius;
-  CUDA_DEVICE [[nodiscard]] CUDA_FORCEINLINE BBox get_bbox() const {
+  CUDA_DEVICE CUDA_FORCEINLINE BBox get_bbox() const {
     return {make_double3(center.x - radius, center.y - radius, center.z - radius),
             make_double3(center.x + radius, center.y + radius, center.z + radius)};
   }
 
-  CUDA_DEVICE [[nodiscard]] CUDA_FORCEINLINE bool has_intersection(const double3 &o, const double3 &d) const {
+  CUDA_DEVICE CUDA_FORCEINLINE bool has_intersection(const double3 &o, const double3 &d) const {
     double a = dot(d, d);
     double b = 2 * dot((o - center), d);
     double c = dot(o - center, o - center) - radius * radius;
@@ -70,7 +71,7 @@ struct Sphere {
     return center + radius * make_double3(r * cos(phi), r * sin(phi), z);
   }
 
-  CUDA_DEVICE [[nodiscard]] CUDA_FORCEINLINE double pdf(const double3 &pos) const {
+  CUDA_DEVICE CUDA_FORCEINLINE double pdf(const double3 &pos) const {
     return 1 / (4 * PI);
   }
 };
@@ -93,7 +94,7 @@ class Triangle {
    * Get the world space bounding box of the triangle.
    * \return world space bounding box of the triangle
    */
-  CUDA_DEVICE [[nodiscard]] CUDA_FORCEINLINE
+  CUDA_DEVICE CUDA_FORCEINLINE
   BBox get_bbox() const {
     const double3 &v0 = mesh->positions[mesh->indices[idx_offset]];
     const double3 &v1 = mesh->positions[mesh->indices[idx_offset + 1]];
@@ -106,7 +107,7 @@ class Triangle {
                          fmax(fmax(v0.z, v1.z), v2.z))};
   }
 
-  CUDA_DEVICE [[nodiscard]] CUDA_INLINE
+  CUDA_DEVICE CUDA_INLINE
   bool has_intersection(const double3 &o, const double3 &d) const {
     const auto &p1 = mesh->positions[mesh->indices[idx_offset]];
     const auto &p2 = mesh->positions[mesh->indices[idx_offset + 1]];
@@ -177,7 +178,7 @@ class Triangle {
     return b1 * p1 + b2 * p2 + b3 * p3;
   }
 
-  CUDA_DEVICE [[nodiscard]] CUDA_FORCEINLINE double pdf(const double3 &pos) const {
+  CUDA_DEVICE CUDA_FORCEINLINE double pdf(const double3 &pos) const {
     const auto &p1 = mesh->positions[mesh->indices[idx_offset]];
     const auto &p2 = mesh->positions[mesh->indices[idx_offset + 1]];
     const auto &p3 = mesh->positions[mesh->indices[idx_offset + 2]];
@@ -210,7 +211,7 @@ replace(Triangle)
 #undef UNION_ITEM
 #define SWITCH_CASE_CLAUSE(name) \
 case name##_enum: return item.name##_union.get_bbox();
-  CUDA_DEVICE [[nodiscard]] CUDA_FORCEINLINE BBox get_bbox() const {
+  CUDA_DEVICE CUDA_FORCEINLINE BBox get_bbox() const {
     SWITCH_DESPATCH(SWITCH_CASE_CLAUSE);
     
   }
@@ -218,7 +219,7 @@ case name##_enum: return item.name##_union.get_bbox();
 #undef SWITCH_CASE_CLAUSE
 #define SWITCH_CASE_CLAUSE(name) \
 case name##_enum: return item.name##_union.has_intersection(o, d);
-  CUDA_DEVICE [[nodiscard]] CUDA_FORCEINLINE bool has_intersection(const double3 &o, const double3 &d) const {
+  CUDA_DEVICE CUDA_FORCEINLINE bool has_intersection(const double3 &o, const double3 &d) const {
     SWITCH_DESPATCH(SWITCH_CASE_CLAUSE);
     
   }
@@ -254,7 +255,7 @@ case name##_enum: return item.name##_union.sample(uv, pdf, normal);
 
 #define SWITCH_CASE_CLAUSE(name) \
 case name##_enum: return item.name##_union.pdf(pos);
-  CUDA_DEVICE [[nodiscard]] CUDA_FORCEINLINE double pdf(const double3 &pos) const {
+  CUDA_DEVICE CUDA_FORCEINLINE double pdf(const double3 &pos) const {
     SWITCH_DESPATCH(SWITCH_CASE_CLAUSE);
     
   }

@@ -36,7 +36,7 @@ class Mat3 {
     entries[2] = make_double3(m20, m21, m22);
   }
 
-  CUDA_CALLABLE [[nodiscard]] CUDA_FORCEINLINE
+  CUDA_CALLABLE CUDA_FORCEINLINE
   const double3 &column(int i) const {
     return entries[i];
   }
@@ -56,6 +56,18 @@ class Mat3 {
     return entries[i];
   }
 
+  CUDA_CALLABLE CUDA_FORCEINLINE
+  double operator()(int i, int j) const {
+    if (i == 0) return entries[j].x;
+    if (i == 1) return entries[j].y;
+    return entries[j].z;
+  }
+  CUDA_CALLABLE CUDA_FORCEINLINE
+  double& operator()(int i, int j) {
+    if (i == 0) return entries[j].x;
+    if (i == 1) return entries[j].y;
+    return entries[j].z;
+  }
  protected:
   // column vectors
   double3 entries[3];

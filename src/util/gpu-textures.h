@@ -34,6 +34,18 @@ struct CudaArray3D : NonCopyable {
     copy3DParams.kind = cudaMemcpyHostToDevice;
     cudaMemcpy3D(&copy3DParams);
   }
+  void copyFrom(std::vector<T> &data) {
+    cudaMemcpy3DParms copy3DParams{};
+    copy3DParams.srcPtr =
+        make_cudaPitchedPtr(static_cast<void *>(data.data()),
+                            dim.x * sizeof(T),
+                            dim.x,
+                            dim.y);
+    copy3DParams.dstArray = cuda_array;
+    copy3DParams.extent = make_cudaExtent(dim.x, dim.y, dim.z);
+    copy3DParams.kind = cudaMemcpyHostToDevice;
+    cudaMemcpy3D(&copy3DParams);
+  }
 
   void copyTo(T *data) {
     cudaMemcpy3DParms copy3DParams{};

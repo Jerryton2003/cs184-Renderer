@@ -9,7 +9,6 @@
 
 #include "GL/glew.h"
 
-#include "scene/light.h"
 #include "scene/scene.h"
 #include "sampler.h"
 
@@ -79,10 +78,10 @@ RaytracedRenderer::RaytracedRenderer(size_t ns_aa,
  * scene is later passed in.
  * \param scene pointer to the new scene to be rendered
  */
-void RaytracedRenderer::set_scene(std::unique_ptr<Scene>& scene) {
+void RaytracedRenderer::set_scene(std::unique_ptr<Scene>& scene_) {
 
   std::cout << "Set scene" << std::endl;
-  this->scene = std::make_unique<Scene>();
+  this->scene = std::move(scene_);
 }
 
 /**

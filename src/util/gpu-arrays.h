@@ -38,6 +38,8 @@ class DeviceArray : NonCopyable {
   }
   // constructor
   CUDA_CALLABLE explicit DeviceArray(size_t size_) : m_size(size_) {
+    if (size_ > 1000000)
+      printf("size: %zu\n", size_);
     cudaSafeCheck(cudaMalloc(&ptr, m_size * sizeof(T)));
   }
 

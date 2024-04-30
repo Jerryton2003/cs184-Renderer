@@ -7,7 +7,8 @@
 #include "pathtracer/sampler.h"
 
 #include "scene/scene.h"
-
+#include "util/image.h"
+#include "pathtracer/camera.h"
 using CGL::Scene;
 
 namespace CGL {

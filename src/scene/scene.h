@@ -5,53 +5,10 @@
 #include <memory>
 #include <vector>
 #include "pathtracer/sampler.h"
-#include "pathtracer/bsdf.h"
+#include "util/gpu-textures.h"
 
 namespace CGL {
 struct DiscreteDistribution;
-
-class BSDF;
-namespace SceneObjects {
-/**
- * Interface for objects in the scene.
- */
-class SceneObject {
- public:
-  /**
-   * Get the surface BSDF of the object's surface.
-   * \return the BSDF of the objects's surface
-   */
-  virtual BSDF *get_bsdf() const = 0;
-};
-
-/**
- * Interface for lights in the scene.
- */
-class SceneLight {
- public:
-  virtual double3 sample_L(const double3 &p,
-                           double3 *wi,
-                           double *distToLight,
-                           double *pdf) const = 0;
-
-  virtual bool is_delta_light() const = 0;
-};
-
-struct Scene {
-  Scene(const std::vector<SceneObject *> &objects,
-        const std::vector<SceneLight *> &lights)
-      : objects(objects), lights(lights) {
-  }
-
-  // kept to make sure they don't get deleted, in case the
-  //  primitives depend on them (e.g. Mesh Triangles).
-  std::vector<SceneObject *> objects;
-
-  // for sake of consistency of the scene object Interface
-  std::vector<SceneLight *> lights;
-};
-} // namespace SceneObjects
-
 struct DiffuseData {
   double3 albedo;
 
@@ -118,7 +75,7 @@ struct LightSamplerAccessor {
     int pr_idx;
     double pdf;
   };
-  CUDA_DEVICE [[nodiscard]] CUDA_FORCEINLINE
+  CUDA_DEVICE CUDA_FORCEINLINE
   SampleRecord sample(const double2 &uv) const {
     int idx = static_cast<int>(uv.x * nLights);
     double pdf = accept[idx];
@@ -127,12 +84,12 @@ struct LightSamplerAccessor {
     return {light_indices[alias[idx]], probabilities[alias[idx]]};
   }
 
-  CUDA_DEVICE [[nodiscard]] CUDA_FORCEINLINE
+  CUDA_DEVICE CUDA_FORCEINLINE
   double prob(int light_id) const {
     return probabilities[light_id];
   }
 
-  CUDA_DEVICE [[nodiscard]] CUDA_FORCEINLINE
+  CUDA_DEVICE CUDA_FORCEINLINE
   double probPrimitive(int primitive_id) const {
     return prob(map_primitive_to_light[primitive_id]);
   }
@@ -187,6 +144,7 @@ struct Scene {
     std::vector<DeviceArray<double3>> normals{};
     std::vector<DeviceArray<uint32_t>> indices{};
   } mesh_pool;
+  std::vector<std::unique_ptr<CudaTexture<float4>>> vol_textures;
   std::unique_ptr<DeviceArray<DiffuseData>> diffuse_data;
   std::unique_ptr<DeviceArray<SpecularData>> specular_data;
   std::unique_ptr<DeviceArray<DielectricData>> dielectric_data;

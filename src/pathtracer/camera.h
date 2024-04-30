@@ -99,7 +99,7 @@ class Camera {
 
   double3 view_point() const { return targetPos; }
 
-  double3 up_dir() const { return to_double3(c2w[1]); }
+  double3 up_dir() const { return c2w[1]; }
 
   double v_fov() const { return vFov; }
 
@@ -138,7 +138,7 @@ class Camera {
   // camera-to-world rotation matrix (note: also need to translate a
   // camera-space point by 'pos' to perform a full camera-to-world
   // transform)
-  Matrix3x3 c2w;
+  Mat3 c2w;
 
   // Info about screen to render to; it corresponds to the camera's full field
   // of view at some distance.

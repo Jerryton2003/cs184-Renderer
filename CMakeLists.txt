@@ -13,7 +13,7 @@ set(APPLICATION_3_1_SOURCE
         src/scene/bvh.cu
 
         # Pathtracer
-        src/pathtracer/camera.cu
+        src/pathtracer/camera.cpp
         src/pathtracer/pathtracer.cu
 
         src/scene/shape.h
@@ -25,7 +25,6 @@ set(APPLICATION_3_2_SOURCE
 
         # MeshEdit
 
-        src/pathtracer/camera_lens.cu
         src/pathtracer/raytraced_renderer.cu
 
         # misc
