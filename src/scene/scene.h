@@ -169,7 +169,7 @@ enum SurfaceInfo : uint8_t {
 enum PhaseFunctions : uint8_t {
   Isotropic,
   HenyeyGreenstein,
-    NumPhaseFunctions
+  NumPhaseFunctions
 };
 struct PhaseFunction {
   PhaseFunctions pf;
@@ -183,9 +183,9 @@ struct Medium;
  */
 struct Scene {
   struct MeshPool {
-    std::vector<DeviceArray<double3>> vertices;
-    std::vector<DeviceArray<double3>> normals;
-    std::vector<DeviceArray<uint32_t>> indices;
+    std::vector<DeviceArray<double3>> vertices{};
+    std::vector<DeviceArray<double3>> normals{};
+    std::vector<DeviceArray<uint32_t>> indices{};
   } mesh_pool;
   std::unique_ptr<DeviceArray<DiffuseData>> diffuse_data;
   std::unique_ptr<DeviceArray<SpecularData>> specular_data;

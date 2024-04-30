@@ -11,42 +11,6 @@
 #define M_1_PI 0.31830988618379067154 /* 1/pi */
 
 namespace CGL {
-/**
- * A Sampler3D implementation with uniform distribution on unit sphere
- */
-class UniformSphereSampler3D {
- public:
-  [[nodiscard]] double3 get_sample() const;
-}; // class UniformHemisphereSampler3D
-
-/**
- * A Sampler2D implementation with uniform distribution on unit square
- */
-class UniformGridSampler2D {
- public:
-  [[nodiscard]] double2 get_sample() const;
-}; // class UniformSampler2D
-
-/**
- * A Sampler3D implementation with uniform distribution on unit hemisphere
- */
-class UniformHemisphereSampler3D {
- public:
-  [[nodiscard]] double3 get_sample() const;
-}; // class UniformHemisphereSampler3D
-
-/**
- * A Sampler3D implementation with cosine-weighted distribution on unit
- * hemisphere.
- */
-class CosineWeightedHemisphereSampler3D {
- public:
-  [[nodiscard]] double3 get_sample() const;
-
-  // Also returns the pdf at the sample point for use in importance sampling.
-  double3 get_sample(double *pdf) const;
-}; // class UniformHemisphereSampler3D
-
 CUDA_DEVICE CUDA_INLINE
 double3 cosHemisphereSample(const double2 &uv) {
   // cosine weighted hemisphere sample

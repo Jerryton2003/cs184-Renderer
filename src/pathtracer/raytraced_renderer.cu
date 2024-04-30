@@ -1,5 +1,4 @@
 #include "raytraced_renderer.h"
-#include "bsdf.h"
 
 #include <stack>
 #include <algorithm>
@@ -42,7 +41,7 @@ RaytracedRenderer::RaytracedRenderer(size_t ns_aa,
                                      float max_tolerance,
                                      HDRImageBuffer *envmap,
                                      bool direct_hemisphere_sample,
-                                     string filename,
+                                     std::string filename,
                                      double lensRadius,
                                      double focalDistance) {
   pt = std::make_unique<PathTracer>();
@@ -318,7 +317,7 @@ void RaytracedRenderer::build_accel(int pr_cnt, const std::vector<Shape>& shapes
   fprintf(stdout, "Done! (%.4f sec)\n", timer.duration());
 }
 
-void RaytracedRenderer::save_image(string filename, ImageBuffer *buffer) {
+void RaytracedRenderer::save_image(std::string filename, ImageBuffer *buffer) {
 
   if (!buffer)
     buffer = &frameBuffer;
@@ -329,7 +328,7 @@ void RaytracedRenderer::save_image(string filename, ImageBuffer *buffer) {
 
     time_t t = time(nullptr);
     tm *lt = localtime(&t);
-    stringstream ss;
+    std::stringstream ss;
     ss << this->filename << "_screenshot_" << lt->tm_mon + 1 << "-" << lt->tm_mday << "_"
        << lt->tm_hour << "-" << lt->tm_min << "-" << lt->tm_sec << ".png";
     filename = ss.str();

@@ -8,16 +8,7 @@
 #include "CGL/vector2D.h"
 #include "CGL/vector3D.h"
 
-using std::cout;
-using std::endl;
-using std::max;
-using std::min;
-using std::ifstream;
-using std::ofstream;
-
 namespace CGL {
-
-using Collada::CameraInfo;
 
 /**
  * Sets the field of view to match screen screenW/H.
@@ -26,25 +17,25 @@ using Collada::CameraInfo;
  *       of view is expanded along whichever dimension is too narrow.
  * NOTE2: info.hFov and info.vFov are expected to be in DEGREES.
  */
-void Camera::configure(const CameraInfo& info, size_t screenW, size_t screenH) {
-  this->screenW = screenW;
-  this->screenH = screenH;
-  nClip = info.nClip;
-  fClip = info.fClip;
-  hFov = info.hFov;
-  vFov = info.vFov;
-
-  double ar1 = tan(radians(hFov) / 2) / tan(radians(vFov) / 2);
-  ar = static_cast<double>(screenW) / screenH;
-  if (ar1 < ar) {
-    // hFov is too small
-    hFov = 2 * degrees(atan(tan(radians(vFov) / 2) * ar));
-  } else if (ar1 > ar) {
-    // vFov is too small
-    vFov = 2 * degrees(atan(tan(radians(hFov) / 2) / ar));
-  }
-  screenDist = ((double) screenH) / (2.0 * tan(radians(vFov) / 2));
-}
+//void Camera::configure(const CameraInfo& info, size_t screenW, size_t screenH) {
+//  this->screenW = screenW;
+//  this->screenH = screenH;
+//  nClip = info.nClip;
+//  fClip = info.fClip;
+//  hFov = info.hFov;
+//  vFov = info.vFov;
+//
+//  double ar1 = tan(radians(hFov) / 2) / tan(radians(vFov) / 2);
+//  ar = static_cast<double>(screenW) / screenH;
+//  if (ar1 < ar) {
+//    // hFov is too small
+//    hFov = 2 * degrees(atan(tan(radians(vFov) / 2) * ar));
+//  } else if (ar1 > ar) {
+//    // vFov is too small
+//    vFov = 2 * degrees(atan(tan(radians(hFov) / 2) / ar));
+//  }
+//  screenDist = ((double) screenH) / (2.0 * tan(radians(vFov) / 2));
+//}
 
 /**
  * This function places the camera at the target position and sets the arguments.
@@ -53,7 +44,7 @@ void Camera::configure(const CameraInfo& info, size_t screenW, size_t screenH) {
 void Camera::place(const Vector3D targetPos, const double phi,
                    const double theta, const double r, const double minR,
                    const double maxR) {
-  double r_ = min(max(r, minR), maxR);
+  double r_ = std::min(std::max(r, minR), maxR);
   double phi_ = (sin(phi) == 0) ? (phi + EPS_F) : phi;
   this->targetPos = to_double3(targetPos);
   this->phi = phi_;
@@ -103,7 +94,7 @@ void Camera::move_by(const double dx, const double dy, const double d) {
  * This function translates the camera position (in forward direction)
  */
 void Camera::move_forward(const double dist) {
-  double newR = min(max(r - dist, minR), maxR);
+  double newR = std::min(std::max(r - dist, minR), maxR);
   pos = targetPos + ((pos - targetPos) * (newR / r));
   r = newR;
 }

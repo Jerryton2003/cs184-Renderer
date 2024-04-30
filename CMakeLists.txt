@@ -10,12 +10,10 @@ set(CMAKE_CXX_STANDARD 20)
 set(APPLICATION_3_1_SOURCE
 
         # Scene Object & Structure
-        src/scene/light.cpp
         src/scene/bvh.cu
 
         # Pathtracer
-        src/pathtracer/camera.cpp
-        src/pathtracer/bsdf.cpp
+        src/pathtracer/camera.cu
         src/pathtracer/pathtracer.cu
 
         src/scene/shape.h
@@ -24,18 +22,13 @@ set(APPLICATION_3_1_SOURCE
 )
 
 set(APPLICATION_3_2_SOURCE
-        src/scene/object.cpp
 
         # MeshEdit
-        src/util/halfEdgeMesh.cpp
 
-        src/pathtracer/sampler.cu
-        src/pathtracer/advanced_bsdf.cpp
-        src/pathtracer/camera_lens.cpp
-        src/pathtracer/raytraced_renderer.cpp
+        src/pathtracer/camera_lens.cu
+        src/pathtracer/raytraced_renderer.cu
 
         # misc
-        src/util/sphere_drawing.cpp
         src/util/lodepng.cpp
 
         # Application
@@ -54,28 +47,22 @@ set(APPLICATION_HEADERS
         src/scene/aggregate.h
         src/scene/bbox.h
         src/scene/bvh.h
-        src/scene/light.h
         src/scene/object.h
         src/scene/primitive.h
         src/scene/triangle.h
         src/scene/sphere.h
         src/scene/scene.h
         # MeshEdit
-        src/util/halfEdgeMesh.h
         src/util/image.h
-        src/util/mutablePriorityQueue.h
         src/util/random_util.h
-        src/util/work_queue.h
         src/util/device-utils.h
         src/util/device-vec-ops.h
         # Pathtracer
-        src/pathtracer/bsdf.h
         src/pathtracer/camera.h
         src/pathtracer/pathtracer.h
         src/pathtracer/raytraced_renderer.h
         src/pathtracer/sampler.h
         # misc
-        src/util/sphere_drawing.h
         src/util/lodepng.h
         # Application
         src/util/gpu-textures.h

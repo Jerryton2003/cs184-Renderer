@@ -39,7 +39,8 @@ struct Sphere {
   CUDA_DEVICE CUDA_INLINE bool intersect(const double3 &o,
                                          const double3 &d,
                                          double3 &isect_n,
-                                         double &t,bool debug = false) const {
+                                         double &t) const {
+
     if (!has_intersection(o, d)) return false;
 
 

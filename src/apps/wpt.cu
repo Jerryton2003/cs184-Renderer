@@ -19,6 +19,8 @@ std::string bunnyDir = "./assets/";
 std::string bunnyFilename = "complex_bunny.obj";
 std::string fluidObjDir = "./assets/obj_file/";
 
+using namespace CGL;
+
 void relocateMesh(CGL::ObjMesh &mesh, const double3 &size) {
   double max_coord = -1e9, min_coord = 1e9;
   for (const auto &v : mesh.vertices) {
@@ -55,11 +57,52 @@ void loadFluid(ObjMesh &mesh, int idx) {
   }
 }
 
+void loadLightning(ObjMesh &mesh, int idx) {
+  std::string filename = lightningRedDir + "lightning_red_" + std::to_string(idx) + ".obj";
+  std::cout << "loading " << filename << std::endl;
+  if (!myLoadObj(filename, &mesh)) {
+    std::cerr << "failed to load " << filename << std::endl;
+    exit(1);
+  }
+}
+
 std::unique_ptr<CGL::Camera> hardCodedCamera(int frame_idx) {
   auto camera = std::make_unique<CGL::Camera>();
   camera->nClip = 0.1;
   camera->fClip = 100;
 
+}
+
+void addMesh(int idx,
+             std::vector<CGL::Shape> &shapes,
+             std::vector<CGL::Surface> &materials,
+             std::unique_ptr<CGL::Scene> &scene,
+             std::vector<CGL::Mesh> &host_meshes,
+             const CGL::ObjMesh &host_mesh,
+             const CGL::Surface &material) {
+  scene->mesh_pool.vertices[idx].copyFrom(host_mesh.vertices);
+  scene->mesh_pool.normals[idx].copyFrom(host_mesh.normals);
+  scene->mesh_pool.indices[idx].copyFrom(host_mesh.indices);
+  for (int i = 0; i < host_mesh.triangleCount; i++) {
+    Shape shape;
+    shape.getTriangle() = Triangle(scene->meshes->data() + idx, i * 3);
+    shapes.emplace_back(shape);
+    materials.emplace_back(material);
+  }
+  host_meshes[idx] = CGL::Mesh(scene->mesh_pool.vertices[idx].constAccessor(),
+                               scene->mesh_pool.normals[idx].constAccessor(),
+                               scene->mesh_pool.indices[idx].constAccessor());
+}
+
+void addSphere(const double3 &centre,
+               double radius,
+               std::vector<CGL::Shape> &shapes,
+               std::vector<CGL::Surface> &materials,
+               const CGL::Surface &material) {
+  Shape shape;
+  shape.getSphere() = Sphere(centre, radius);
+  shapes.emplace_back(shape);
+  materials.emplace_back(material);
 }
 
 std::tuple<std::unique_ptr<CGL::Scene>,
@@ -68,9 +111,19 @@ std::tuple<std::unique_ptr<CGL::Scene>,
   auto scene = std::make_unique<CGL::Scene>();
   std::vector<CGL::Shape> shapes;
   std::vector<CGL::Surface> materials;
+  int mesh_cnt = 2;
+  std::vector<CGL::Mesh> host_meshes(mesh_cnt);
+  scene->meshes = std::make_unique<CGL::DeviceArray<CGL::Mesh>>(mesh_cnt);
+  scene->mesh_pool.vertices = std::vector<CGL::DeviceArray<double3>>(mesh_cnt);
+  scene->mesh_pool.normals = std::vector<CGL::DeviceArray<double3>>(mesh_cnt);
+  scene->mesh_pool.indices = std::vector<CGL::DeviceArray<uint32_t>>(mesh_cnt);
   ObjMesh bunny;
   loadBunny(bunny);
-
+  addMesh(0, shapes, materials, scene, host_meshes, bunny, CGL::Surface());
+  ObjMesh fluid;
+  loadFluid(fluid, frame_idx);
+  addMesh(1, shapes, materials, scene, host_meshes, fluid, CGL::Surface());
+  scene->meshes->copyFrom(host_meshes);
   return std::make_tuple(std::move(scene), std::move(shapes), std::move(materials));
 }
 

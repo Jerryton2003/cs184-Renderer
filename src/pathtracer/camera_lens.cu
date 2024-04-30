@@ -17,6 +17,5 @@ using std::ofstream;
 
 namespace CGL {
 
-using Collada::CameraInfo;
 
 } // namespace CGL
