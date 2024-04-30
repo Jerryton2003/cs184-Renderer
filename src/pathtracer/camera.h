@@ -3,7 +3,6 @@
 
 #include <iostream>
 
-#include "scene/collada/camera_info.h"
 #include "../util/device-vec-ops.h"
 #include "CGL/matrix3x3.h"
 
@@ -17,16 +16,6 @@ namespace CGL {
  */
 class Camera {
  public:
-  /*
-    Sets the field of view to match screen screenW/H.
-    NOTE: data and screenW/H will almost certainly disagree about the aspect
-          ratio. screenW/H are treated as the source of truth, and the field
-          of view is expanded along whichever dimension is too narrow.
-    NOTE2: info.hFov and info.vFov are expected to be in DEGREES.
-  */
-  void configure(const Collada::CameraInfo &info,
-                 size_t screenW, size_t screenH);
-
   /*
     Phi and theta are in RADIANS.
   */

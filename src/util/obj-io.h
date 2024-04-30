@@ -13,5 +13,6 @@ struct ObjMesh {
   std::vector<int> indices;
   int triangleCount;
 };
+bool myLoadObj(const std::string& path, ObjMesh* mesh);
 }
 #endif //SOSONOWPT_SRC_UTIL_OBJ_IO_H_

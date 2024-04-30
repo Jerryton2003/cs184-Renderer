@@ -73,13 +73,11 @@ class RaytracedRenderer {
   void save_image(std::string filename = "", ImageBuffer *buffer = NULL);
 
   void set_camera(std::unique_ptr<Camera> &camera_);
-
- private:
-
+  void set_scene(std::unique_ptr<Scene> &scene_);
   void build_accel(int pr_cnt,
                    const std::vector<Shape> &shapes,
                    const std::vector<Surface> &materials);
-
+ private:
   std::unique_ptr<PathTracer> pt{};
 
   // Configurables //
@@ -99,8 +97,6 @@ class RaytracedRenderer {
 
   ImageBuffer frameBuffer;       ///< frame buffer
   Timer timer;                   ///< performance test timer
-
-  std::vector<int> sampleCountBuffer;   ///< sample count buffer
 
   std::string filename;
 };

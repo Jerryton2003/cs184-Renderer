@@ -46,6 +46,7 @@ set(APPLICATION_3_2_SOURCE
         src/apps/wpt.cu
         src/util/obj-io.cc
         src/util/obj-io.h
+        src/util/medium-io.h
 )
 
 set(APPLICATION_HEADERS

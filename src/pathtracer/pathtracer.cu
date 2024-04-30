@@ -724,70 +724,70 @@ void PathTracer::copyToConstantMemory() const {
 }
 
 void PathTracer::raytrace() {
-//  std::vector<Medium> host_media(1);
-//  host_media[0].getHomogeneousMedium() = HomogeneousMedium(make_double3(0.1, 0.1, 0.1), make_double3(0.1, 0.7, 0.1));
-//  scene->media = std::make_unique<DeviceArray<Medium>>(host_media);
-//  std::vector<PhaseFunction> host_phase_functions(1);
-//  host_phase_functions[0].pf = PhaseFunctions::Isotropic;
-//  host_phase_functions[0].pf_id = 0;
-//  scene->phase_functions = std::make_unique<DeviceArray<PhaseFunction>>(host_phase_functions);
-//  scene->phase_functions->copyFrom(host_phase_functions);
-//  std::vector<IsotropicData> host_isotropic_data(1);
-//  host_isotropic_data[0].albedo = make_double3(1.0, 1.0, 1.0);
-//  scene->isotropic_data = std::make_unique<DeviceArray<IsotropicData>>(host_isotropic_data);
-//  camera->medium_id = 0;
-//  stream = std::make_unique<CudaStream>();
-//  int rest_samples = static_cast<int>(targetSamplePaths());
-//  int current_live_paths = min(rest_samples, config.num_paths);
-//  int total_samples = 0;
-//  config.width = static_cast<int>(sampleBuffer.w);
-//  config.height = static_cast<int>(sampleBuffer.h);
-//  config.num_paths = std::min(config.num_paths, rest_samples);
-//  cudaMemcpyToSymbol(kPathTracerConfig, &config, sizeof(Config));
-//  std::vector<int> work_sizes(work_pool->nWorks);
-//  std::cout << std::format("Config: num_paths: {}, spp: {}, width: {}, height: {}\n",
-//                           config.num_paths, config.spp, config.width, config.height);
-//  initRng();
-//  // print camera->c2w
-//  copyToConstantMemory();
-//  cudaSafeCheck(kernelRayGeneration<<<LAUNCH_THREADS(current_live_paths)>>>(
-//      current_live_paths,
-//      camera->hFov,
-//      camera->vFov,
-//      camera->pos,
-//      to_Mat3(camera->c2w),
-//      camera->medium_id
-//  ));
-//  std::cout << std::format("Start with {} paths\n", current_live_paths);
-//  cudaSafeCheck(kernelExtendPath<<<LAUNCH_THREADS(current_live_paths)>>>(
-//      current_live_paths));
-//  total_samples += current_live_paths;
-//  int num_new_paths{}, old_live_paths{};
-//  while (true) {
-//    printf("current live paths: %d\n", current_live_paths);
-//    cudaMemset(work_pool->work_sizes->data(), 0, sizeof(int) * work_pool->nWorks);
-//    cudaSafeCheck(kernelPathLogic<<<LAUNCH_THREADS(current_live_paths)>>>(current_live_paths));
-//    cudaWait();
-//    work_pool->getWorkSize(work_sizes);
-//    int num_terminated_paths = work_sizes[surfaceInfo2ScatterType(SurfaceInfo::EnvMap)];
-//    rest_samples -= num_terminated_paths;
-//    old_live_paths = current_live_paths - num_terminated_paths;
-//    std::cout << std::format("{} paths terminated, {} samples left\n", num_terminated_paths, rest_samples);
-//    if (rest_samples == 0) break;
-//    auto mat_begin = thrust::device_ptr<int>(path_pool.scatter_type->begin());
-//    auto mat_end = thrust::device_ptr<int>(path_pool.scatter_type->begin() + current_live_paths);
-//    auto idx_begin = thrust::device_ptr<int>(work_pool->indices->begin());
-//    cudaSafeCheck(thrust::sort_by_key(mat_begin, mat_end, idx_begin));
-//    current_live_paths = std::min(rest_samples, config.num_paths);
-//    num_new_paths = current_live_paths - old_live_paths;
-//    // put the terminated paths at the end of the pool, and we only care about the first current_live_paths paths
-//    shadeScatter(work_sizes, total_samples, num_new_paths);
-//    total_samples += num_new_paths;
-//    pathExtend(num_new_paths, current_live_paths, lbvh->scene_bound);
-//  }
-//  cudaSafeCheck(kernelAverageImage<<<LAUNCH_THREADS(sampleBuffer.w * sampleBuffer.h)>>>(
-//      static_cast<int>(sampleBuffer.w * sampleBuffer.h),
-//      sampleBuffer.data->accessor()));
+  std::vector<Medium> host_media(1);
+  host_media[0].getHomogeneousMedium() = HomogeneousMedium(make_double3(0.1, 0.1, 0.1), make_double3(0.1, 0.7, 0.1));
+  scene->media = std::make_unique<DeviceArray<Medium>>(host_media);
+  std::vector<PhaseFunction> host_phase_functions(1);
+  host_phase_functions[0].pf = PhaseFunctions::Isotropic;
+  host_phase_functions[0].pf_id = 0;
+  scene->phase_functions = std::make_unique<DeviceArray<PhaseFunction>>(host_phase_functions);
+  scene->phase_functions->copyFrom(host_phase_functions);
+  std::vector<IsotropicData> host_isotropic_data(1);
+  host_isotropic_data[0].albedo = make_double3(1.0, 1.0, 1.0);
+  scene->isotropic_data = std::make_unique<DeviceArray<IsotropicData>>(host_isotropic_data);
+  camera->medium_id = 0;
+  stream = std::make_unique<CudaStream>();
+  int rest_samples = static_cast<int>(config.spp * config.width * config.height);
+  int current_live_paths = min(rest_samples, config.num_paths);
+  int total_samples = 0;
+  config.width = static_cast<int>(sampleBuffer.w);
+  config.height = static_cast<int>(sampleBuffer.h);
+  config.num_paths = std::min(config.num_paths, rest_samples);
+  cudaMemcpyToSymbol(kPathTracerConfig, &config, sizeof(Config));
+  std::vector<int> work_sizes(work_pool->nWorks);
+  std::cout << std::format("Config: num_paths: {}, spp: {}, width: {}, height: {}\n",
+                           config.num_paths, config.spp, config.width, config.height);
+  initRng();
+  // print camera->c2w
+  copyToConstantMemory();
+  cudaSafeCheck(kernelRayGeneration<<<LAUNCH_THREADS(current_live_paths)>>>(
+      current_live_paths,
+      camera->hFov,
+      camera->vFov,
+      camera->pos,
+      to_Mat3(camera->c2w),
+      camera->medium_id
+  ));
+  std::cout << std::format("Start with {} paths\n", current_live_paths);
+  cudaSafeCheck(kernelExtendPath<<<LAUNCH_THREADS(current_live_paths)>>>(
+      current_live_paths));
+  total_samples += current_live_paths;
+  int num_new_paths{}, old_live_paths{};
+  while (true) {
+    printf("current live paths: %d\n", current_live_paths);
+    cudaMemset(work_pool->work_sizes->data(), 0, sizeof(int) * work_pool->nWorks);
+    cudaSafeCheck(kernelPathLogic<<<LAUNCH_THREADS(current_live_paths)>>>(current_live_paths));
+    cudaWait();
+    work_pool->getWorkSize(work_sizes);
+    int num_terminated_paths = work_sizes[surfaceInfo2ScatterType(SurfaceInfo::EnvMap)];
+    rest_samples -= num_terminated_paths;
+    old_live_paths = current_live_paths - num_terminated_paths;
+    std::cout << std::format("{} paths terminated, {} samples left\n", num_terminated_paths, rest_samples);
+    if (rest_samples == 0) break;
+    auto mat_begin = thrust::device_ptr<int>(path_pool.scatter_type->begin());
+    auto mat_end = thrust::device_ptr<int>(path_pool.scatter_type->begin() + current_live_paths);
+    auto idx_begin = thrust::device_ptr<int>(work_pool->indices->begin());
+    cudaSafeCheck(thrust::sort_by_key(mat_begin, mat_end, idx_begin));
+    current_live_paths = std::min(rest_samples, config.num_paths);
+    num_new_paths = current_live_paths - old_live_paths;
+    // put the terminated paths at the end of the pool, and we only care about the first current_live_paths paths
+    shadeScatter(work_sizes, total_samples, num_new_paths);
+    total_samples += num_new_paths;
+    pathExtend(num_new_paths, current_live_paths, lbvh->scene_bound);
+  }
+  cudaSafeCheck(kernelAverageImage<<<LAUNCH_THREADS(sampleBuffer.w * sampleBuffer.h)>>>(
+      static_cast<int>(sampleBuffer.w * sampleBuffer.h),
+      sampleBuffer.data->accessor()));
 }
 
 void PathTracer::autofocus(Vector2D loc) {

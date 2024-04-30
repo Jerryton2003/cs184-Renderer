@@ -84,7 +84,6 @@ void RaytracedRenderer::set_scene(std::unique_ptr<Scene>& scene) {
 
   std::cout << "Set scene" << std::endl;
   this->scene = std::make_unique<Scene>();
-  build_accel(scene);
 }
 
 /**
@@ -100,6 +99,7 @@ void RaytracedRenderer::set_camera(std::unique_ptr<Camera> &camera_) {
   this->frame_h = camera_->screenH;
   this->camera = std::move(camera_);
   pt->set_frame_size(camera->screenW, camera->screenH);
+  frameBuffer.resize(camera->screenW, camera->screenH);
 }
 
 void RaytracedRenderer::clear() {

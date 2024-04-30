@@ -74,7 +74,7 @@ class PathTracer {
     int width{};
     int height{};
     double tm_gamma = 2.2; ///< gamma
-  };
+  } config;
 //  CUDA_CONSTANT Config config;
   size_t max_ray_depth{}; ///< maximum allowed ray depth (applies to all rays)
   size_t ns_aa{}; ///< number of camera rays in one pixel (along one axis)
