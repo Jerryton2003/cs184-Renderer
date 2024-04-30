@@ -17,8 +17,6 @@
 #include "util/image.h"
 #include "util/work_queue.h"
 
-#include "application/renderer.h"
-
 #include "scene/scene.h"
 
 
@@ -50,14 +48,14 @@ struct WorkItem {
  * -> RENDERING: rendering a scene.
  * -> DONE: completed rendering a scene.
  */
-class RaytracedRenderer final : public OfflineRenderer {
+class RaytracedRenderer {
 public:
 
   /**
    * Default constructor.
    * Creates a new pathtracer instance.
    */
-  RaytracedRenderer(size_t ns_aa = 1, 
+  explicit RaytracedRenderer(size_t ns_aa = 1,
              size_t max_ray_depth = 4, bool is_accumulate_bounces =false, size_t ns_area_light = 1,
              size_t ns_diff = 1, size_t ns_glsy = 1, size_t ns_refr = 1,
              size_t num_threads = 1,
@@ -73,57 +71,9 @@ public:
    * Destructor.
    * Frees all the internal resources used by the pathtracer.
    */
-  ~RaytracedRenderer();
+  ~RaytracedRenderer() = default;
 
-  /**
-   * If in the INIT state, configures the pathtracer to use the given scene. If
-   * configuration is done, transitions to the READY state.
-   * This DOES take ownership of the scene, and therefore deletes it if a new
-   * scene is later passed in.
-   * \param scene pointer to the new scene to be rendered
-   */
-  void set_scene(SceneObjects::Scene* scene);
-
-  /**
-   * If in the INIT state, configures the pathtracer to use the given camera. If
-   * configuration is done, transitions to the READY state.
-   * This DOES NOT take ownership of the camera, and doesn't delete it ever.
-   * \param camera the camera to use in rendering
-   */
-  void set_camera(Camera* camera);
-
-  /**
-   * Sets the pathtracer's frame size. If in a running state (VISUALIZE,
-   * RENDERING, or DONE), transitions to READY b/c a changing window size
-   * would invalidate the output. If in INIT and configuration is done,
-   * transitions to READY.
-   * \param width width of the frame
-   * \param height height of the frame
-   */
-  void set_frame_size(size_t width, size_t height);
-
-  /**
-   * Update result on screen.
-   * If the pathtracer is in RENDERING or DONE, it will display the result in
-   * its frame buffer. If the pathtracer is in VISUALIZE mode, it will draw
-   * the BVH visualization with OpenGL.
-   */
-  void update_screen();
-
-  /**
-   * Transitions from any running state to READY.
-   */
-  void stop();
-
-  /**
-   * If the pathtracer is in READY, delete all internal data, transition to INIT.
-   */
   void clear();
-
-  /**
-   * If the pathtracer is in RENDER, set the camera focal distance to the vector.
-   */
-  void autofocus(Vector2D loc);
 
   /**
    * If the pathtracer is in READY, transition to VISUALIZE.
@@ -136,13 +86,6 @@ public:
   void start_raytracing();
 
   void render_to_file(std::string filename, size_t x, size_t y, size_t dx, size_t dy);
-
-  void raytrace_cell(ImageBuffer& buffer);
-
-  /**
-   * If the pathtracer is in VISUALIZE, handle key presses to traverse the bvh.
-   */
-  void key_press(int key);
 
   /**
    * Save rendered result to png file.
@@ -157,47 +100,12 @@ public:
    }
  private:
 
-  /**
-   * Used in initialization.
-   */
-  bool has_valid_configuration();
-
-  /**
-   * Build acceleration structures.
-   */
   void build_accel(SceneObjects::Scene* scene);
 
-  /**
-   * Visualize acceleration structures.
-   */
-  void visualize_accel() const;
-
-  void visualize_cell() const;
-
-  /**
-   * Raytrace a tile of the scene and update the frame buffer. Is run
-   * in a worker thread.
-   */
-  void raytrace_tile(int tile_x, int tile_y, int tile_w, int tile_h);
-
-  /**
-   * Implementation of a ray tracer worker thread
-   */
-  void worker_thread();
-
-  enum State {
-    INIT,               ///< to be initialized
-    READY,              ///< initialized ready to do stuff
-    VISUALIZE,          ///< visualizing BVH accelerator aggregate
-    RENDERING,          ///< started but not completed raytracing
-    DONE                ///< started and completed raytracing
-  };
-
-  PathTracer *pt;
+  std::unique_ptr<PathTracer> pt;
 
   // Configurables //
 
-  State state;          ///< current state
   std::unique_ptr<LBVH> lbvh;           ///< LBVH accelerator
   std::unique_ptr<Scene> scene;         ///< current scene
   std::unique_ptr<Camera> camera;       ///< current camera
@@ -205,8 +113,6 @@ public:
   // Integration state //
 
   vector<int> tile_samples; ///< current sample rate for tile
-  size_t num_tiles_w;       ///< number of tiles along width of the image
-  size_t num_tiles_h;       ///< number of tiles along height of the image
 
   size_t frame_w, frame_h;
 

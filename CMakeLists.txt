@@ -1,22 +1,9 @@
 cmake_minimum_required(VERSION 3.8)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-project(Assignment3 LANGUAGES CXX CUDA)
-project(Assignment3 CXX C CUDA)
+project(SosoNoWPT LANGUAGES CXX CUDA)
+project(SosoNoWPT CXX C CUDA)
 #set(CMAKE_CUDA_ARCHITECTURES 52;70;75;86)
 set(CMAKE_CXX_STANDARD 20)
-#-------------------------------------------------------------------------------
-# Build options
-#-------------------------------------------------------------------------------
-option(BUILD_DEBUG "Build with debug settings" OFF)
-option(BUILD_DOCS "Build documentation" OFF)
-
-
-set(BUILD_DEBUG ${BUILD_DEBUG} CACHE BOOL "Build debug" FORCE)
-
-if (BUILD_DEBUG)
-    set(CMAKE_BUILD_TYPE Debug)
-endif ()
-
 #-------------------------------------------------------------------------------
 # Set target
 #-------------------------------------------------------------------------------
@@ -31,15 +18,6 @@ set(APPLICATION_3_1_SOURCE
         src/pathtracer/bsdf.cpp
         src/pathtracer/pathtracer.cu
 
-        # Imgui
-        src/imgui/imgui.cpp
-        src/imgui/imgui_widgets.cpp
-        src/imgui/imgui_draw.cpp
-        src/imgui/imgui_tables.cpp
-        src/imgui/backends/imgui_impl_glfw.cpp
-        src/imgui/backends/imgui_impl_opengl2.cpp
-
-        src/application/pathtracer_launcher_gui.cpp
         src/scene/shape.h
         src/scene/media.cuh
         src/scene/microfacet.cuh
@@ -63,7 +41,6 @@ set(APPLICATION_3_2_SOURCE
 
         # MeshEdit
         src/util/halfEdgeMesh.cpp
-        src/application/meshEdit.cpp
 
         src/pathtracer/sampler.cu
         src/pathtracer/advanced_bsdf.cpp
@@ -75,20 +52,13 @@ set(APPLICATION_3_2_SOURCE
         src/util/lodepng.cpp
 
         # Application
-        src/application/application.cpp
-        src/application/main.cpp
-        src/application/visual_debugger.cpp
-
-        src/imgui/imgui.cpp
-        src/imgui/imgui_widgets.cpp
-        src/imgui/imgui_draw.cpp
-        src/imgui/imgui_tables.cpp
-        src/imgui/backends/imgui_impl_glfw.cpp
-        src/imgui/backends/imgui_impl_opengl2.cpp
         src/util/device-utils.h
         src/util/properties.h
         src/util/device-vec-ops.h
         src/util/image.cu
+        src/apps/wpt.cu
+        src/util/obj-io.cc
+        src/util/obj-io.h
 )
 
 set(APPLICATION_HEADERS
@@ -141,10 +111,6 @@ set(APPLICATION_HEADERS
         src/util/sphere_drawing.h
         src/util/lodepng.h
         # Application
-        src/application/application.h
-        src/application/meshEdit.h
-        src/application/renderer.h
-
         src/util/gpu-textures.h
 )
 
@@ -187,14 +153,6 @@ target_link_libraries(pt31 PUBLIC OpenGL::GLU)
 #-------------------------------------------------------------------------------
 # Add subdirectories
 #-------------------------------------------------------------------------------
-
-# build documentation
-if (BUILD_DOCS)
-    find_package(DOXYGEN)
-    if (DOXYGEN_FOUND AND BUILD_DOCS)
-        add_subdirectory(docs)
-    endif ()
-endif ()
 
 # Install settings
 set(CMAKE_INSTALL_PREFIX "${Assignment1_SOURCE_DIR}/")

@@ -6,8 +6,6 @@
 #include "scene/bvh.h"
 #include "pathtracer/sampler.h"
 
-#include "application/renderer.h"
-
 #include "scene/scene.h"
 
 using CGL::Scene;

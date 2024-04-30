@@ -45,9 +45,7 @@ RaytracedRenderer::RaytracedRenderer(size_t ns_aa,
                                      string filename,
                                      double lensRadius,
                                      double focalDistance) {
-  state = INIT;
-
-  pt = new PathTracer();
+  pt = std::make_unique<PathTracer>();
 
   pt->ns_aa = ns_aa; // Number of samples per pixel
   pt->max_ray_depth = max_ray_depth; // Maximum recursion ray depth
@@ -76,14 +74,6 @@ RaytracedRenderer::RaytracedRenderer(size_t ns_aa,
 }
 
 /**
- * Destructor.
- * Frees all the internal resources used by the pathtracer.
- */
-RaytracedRenderer::~RaytracedRenderer() {
-  delete pt;
-}
-
-/**
  * If in the INIT state, configures the pathtracer to use the given scene. If
  * configuration is done, transitions to the READY state.
  * This DOES take ownership of the scene, and therefore deletes it if a new
@@ -91,14 +81,6 @@ RaytracedRenderer::~RaytracedRenderer() {
  * \param scene pointer to the new scene to be rendered
  */
 void RaytracedRenderer::set_scene(SceneObjects::Scene *scene) {
-  if (state != INIT) {
-    return;
-  }
-
-  if (this->scene != nullptr) {
-    // delete scene;
-    // delete bvh;
-  }
 
   // if (pt->envLight != nullptr) {
   // scene->lights.push_back(pt->envLight);
@@ -106,9 +88,6 @@ void RaytracedRenderer::set_scene(SceneObjects::Scene *scene) {
   std::cout << "Set scene" << std::endl;
   this->scene = std::make_unique<Scene>();
   build_accel(scene);
-  if (has_valid_configuration()) {
-    state = READY;
-  }
 }
 
 /**
@@ -118,38 +97,10 @@ void RaytracedRenderer::set_scene(SceneObjects::Scene *scene) {
  * \param camera the camera to use in rendering
  */
 void RaytracedRenderer::set_camera(Camera *camera) {
-  if (state != INIT) {
-    return;
-  }
-
   camera->focalDistance = focalDistance;
   camera->lensRadius = lensRadius;
   this->camera = std::make_unique<Camera>(*camera);
-  if (has_valid_configuration()) {
-    state = READY;
-  }
 }
-
-/**
- * Sets the pathtracer's frame size. If in a running state (VISUALIZE,
- * RENDERING, or DONE), transitions to READY b/c a changing window size
- * would invalidate the output. If in INIT and configuration is done,
- * transitions to READY.
- * \param width width of the frame
- * \param height height of the frame
- */
-void RaytracedRenderer::set_frame_size(size_t width, size_t height) {
-  if (state != INIT && state != READY) {
-    stop();
-  }
-  cudaSafeCheck();
-  frame_w = width;
-  frame_h = height;
-
-  frameBuffer.resize(width, height);
-  cell_tl = Vector2D(0, 0);
-  cell_br = Vector2D(width, height);
-  render_cell = false;
 
   pt->set_frame_size(width, height);
 
@@ -158,69 +109,7 @@ void RaytracedRenderer::set_frame_size(size_t width, size_t height) {
   }
 }
 
-bool RaytracedRenderer::has_valid_configuration() {
-  return scene && camera;
-}
-
-/**
- * Update result on screen.
- * If the pathtracer is in RENDERING or DONE, it will display the result in
- * its frame buffer. If the pathtracer is in VISUALIZE mode, it will draw
- * the BVH visualization with OpenGL.
- */
-void RaytracedRenderer::update_screen() {
-  switch (state) {
-    case INIT:
-    case READY:break;
-    case VISUALIZE:visualize_accel();
-      break;
-    case RENDERING:
-      glDrawPixels(frameBuffer.w,
-                   frameBuffer.h,
-                   GL_RGBA,
-                   GL_UNSIGNED_BYTE,
-                   &frameBuffer.data[0]);
-      if (render_cell)
-        visualize_cell();
-      break;
-    case DONE:
-      glDrawPixels(frameBuffer.w,
-                   frameBuffer.h,
-                   GL_RGBA,
-                   GL_UNSIGNED_BYTE,
-                   &frameBuffer.data[0]);
-      if (render_cell)
-        visualize_cell();
-      break;
-  }
-}
-
-/**
- * Transitions from any running state to READY.
- */
-void RaytracedRenderer::stop() {
-  switch (state) {
-    case INIT:
-    case READY:break;
-    case VISUALIZE:state = READY;
-      break;
-    case RENDERING:
-    case DONE:state = READY;
-      break;
-  }
-}
-
-/**
- * If the pathtracer is in READY, delete all internal data, transition to INIT.
- */
 void RaytracedRenderer::clear() {
-  if (state != READY) return;
-  scene = NULL;
-  camera = NULL;
-  frameBuffer.resize(0, 0);
-  state = INIT;
-  render_cell = false;
-
   pt->clear();
 }
 
@@ -228,20 +117,12 @@ void RaytracedRenderer::clear() {
  * If the pathtracer is in READY, transition to VISUALIZE.
  */
 void RaytracedRenderer::start_visualizing() {
-  if (state != READY) {
-    return;
-  }
-  state = VISUALIZE;
 }
 
 /**
  * If the pathtracer is in READY, transition to RENDERING.
  */
 void RaytracedRenderer::start_raytracing() {
-  if (state != READY) return;
-
-  state = RENDERING;
-
   size_t width = frameBuffer.w;
   size_t height = frameBuffer.h;
 
@@ -258,24 +139,13 @@ void RaytracedRenderer::start_raytracing() {
   pt->raytrace();
   timer.stop();
   fprintf(stdout, "[PathTracer] Rendering complete: %.4f sec\n", timer.duration());
-  state = DONE;
 }
 
 void RaytracedRenderer::render_to_file(string filename, size_t x, size_t y, size_t dx, size_t dy) {
-  if (x == -1) {
-    printf("Rendering to file %s...\n", filename.c_str());
-    start_raytracing();
-    save_image(filename);
-    fprintf(stdout, "[PathTracer] Job completed.\n");
-  } else {
-    render_cell = true;
-    cell_tl = Vector2D(x, y);
-    cell_br = Vector2D(x + dx, y + dy);
-    ImageBuffer buffer;
-    raytrace_cell(buffer);
-    save_image(filename, &buffer);
-    fprintf(stdout, "[PathTracer] Cell job completed.\n");
-  }
+  printf("Rendering to file %s...\n", filename.c_str());
+  start_raytracing();
+  save_image(filename);
+  fprintf(stdout, "[PathTracer] Job completed.\n");
 }
 
 static Surface decideMaterial(BSDF *bsdf,
@@ -449,113 +319,6 @@ void RaytracedRenderer::build_accel(SceneObjects::Scene *cpu_scene) {
   lbvh = std::make_unique<LBVH>(pr_id, cpu_shapes, cpu_materials);
   timer.stop();
   fprintf(stdout, "Done! (%.4f sec)\n", timer.duration());
-}
-
-void RaytracedRenderer::visualize_accel() const {
-}
-
-void RaytracedRenderer::visualize_cell() const {
-}
-
-/**
- * If the pathtracer is in VISUALIZE, handle key presses to traverse the bvh.
- */
-void RaytracedRenderer::key_press(int key) {
-  switch (key) {
-    case ']':pt->ns_aa *= 2;
-      fprintf(stdout, "[PathTracer] Samples per pixel changed to %lu\n", pt->ns_aa);
-      //tm_key = clamp(tm_key + 0.02f, 0.0f, 1.0f);
-      break;
-    case '[':
-      //tm_key = clamp(tm_key - 0.02f, 0.0f, 1.0f);
-      pt->ns_aa /= 2;
-      if (pt->ns_aa < 1) pt->ns_aa = 1;
-      fprintf(stdout, "[PathTracer] Samples per pixel changed to %lu\n", pt->ns_aa);
-      break;
-    case '=':
-    case '+':pt->ns_area_light *= 2;
-      fprintf(stdout, "[PathTracer] Area light sample count increased to %zu.\n", pt->ns_area_light);
-      break;
-    case '-':
-    case '_':if (pt->ns_area_light > 1) pt->ns_area_light /= 2;
-      fprintf(stdout, "[PathTracer] Area light sample count decreased to %zu.\n", pt->ns_area_light);
-      break;
-    case '.':
-    case '>':pt->max_ray_depth++;
-      fprintf(stdout, "[PathTracer] Max ray depth increased to %zu.\n", pt->max_ray_depth);
-      break;
-    case ',':
-    case '<':if (pt->max_ray_depth) pt->max_ray_depth--;
-      fprintf(stdout, "[PathTracer] Max ray depth decreased to %zu.\n", pt->max_ray_depth);
-      break;
-    case 'h':
-    case 'H':pt->direct_hemisphere_sample = !pt->direct_hemisphere_sample;
-      fprintf(stdout,
-              "[PathTracer] Toggled direct lighting to %s\n",
-              (pt->direct_hemisphere_sample ? "uniform hemisphere sampling" : "importance light sampling"));
-      break;
-    case 'k':
-    case 'K':pt->camera->lensRadius = std::max(pt->camera->lensRadius - 0.05, 0.0);
-      fprintf(stdout, "[PathTracer] Camera lens radius reduced to %f.\n", pt->camera->lensRadius);
-      break;
-    case 'l':
-    case 'L':pt->camera->lensRadius = pt->camera->lensRadius + 0.05;
-      fprintf(stdout, "[PathTracer] Camera lens radius increased to %f.\n", pt->camera->lensRadius);
-      break;
-    case ';':pt->camera->focalDistance = std::max(pt->camera->focalDistance - 0.1, 0.0);
-      fprintf(stdout, "[PathTracer] Camera focal distance reduced to %f.\n", pt->camera->focalDistance);
-      break;
-    case '\'':pt->camera->focalDistance = pt->camera->focalDistance + 0.1;
-      fprintf(stdout, "[PathTracer] Camera focal distance increased to %f.\n", pt->camera->focalDistance);
-      break;
-    case 'C':render_cell = !render_cell;
-      if (render_cell)
-        fprintf(stdout, "[PathTracer] Now in cell render mode.\n");
-      else
-        fprintf(stdout, "[PathTracer] No longer in cell render mode.\n");
-      break;
-
-    default:return;
-  }
-}
-
-/**
- * Raytrace a tile of the scene and update the frame buffer. Is run
- * in a worker thread.
- */
-void RaytracedRenderer::raytrace_tile(int tile_x,
-                                      int tile_y,
-                                      int tile_w,
-                                      int tile_h) {
-}
-
-void RaytracedRenderer::raytrace_cell(ImageBuffer &buffer) {
-  size_t tile_start_x = cell_tl.x;
-  size_t tile_start_y = cell_tl.y;
-
-  size_t tile_end_x = cell_br.x;
-  size_t tile_end_y = cell_br.y;
-
-  size_t w = tile_end_x - tile_start_x;
-  size_t h = tile_end_y - tile_start_y;
-  HDRImageBuffer sb(w, h);
-  buffer.resize(w, h);
-
-  stop();
-  render_cell = true;
-  start_raytracing();
-  for (size_t y = tile_start_y; y < tile_end_y; y++) {
-    for (size_t x = tile_start_x; x < tile_end_x; x++) {
-      buffer.data[w * (y - tile_start_y) + (x - tile_start_x)] = frameBuffer.data[x + y * frame_w];
-    }
-  }
-}
-
-void RaytracedRenderer::autofocus(Vector2D loc) {
-  pt->autofocus(loc);
-}
-
-void RaytracedRenderer::worker_thread() {
 }
 
 void RaytracedRenderer::save_image(string filename, ImageBuffer *buffer) {
