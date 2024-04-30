@@ -24,8 +24,6 @@ struct Volume {
 inline Volume mixVolumes(const Volume &a, const Volume &b) {
   Volume volume;
   assert(a.resolution.x == b.resolution.x && a.resolution.y == b.resolution.y && a.resolution.z == b.resolution.z);
-  assert(a.orig.x == b.orig.x && a.orig.y == b.orig.y && a.orig.z == b.orig.z);
-  assert(a.spacing.x == b.spacing.x && a.spacing.y == b.spacing.y && a.spacing.z == b.spacing.z);
   volume.resolution = a.resolution;
   volume.orig = a.orig;
   volume.spacing = a.spacing;

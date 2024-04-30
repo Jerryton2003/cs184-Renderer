@@ -138,6 +138,13 @@ int addDiffuse(const double3 &albedo,
   return diffuse_data.size() - 1;
 }
 
+int addMediumInterface(int8_t internal,
+                       int8_t external,
+                       std::vector<MediumInterfaceData> &medium_interface_data) {
+  medium_interface_data.push_back(MediumInterfaceData{internal, external});
+  return medium_interface_data.size() - 1;
+}
+
 int addEmissive(const double3 &radiance,
                 std::vector<EmissiveData> &emissive_data) {
   emissive_data.emplace_back(radiance);
@@ -234,9 +241,9 @@ std::tuple<std::unique_ptr<Scene>,
   scene->mesh_pool.vertices = std::vector<CGL::DeviceArray<double3>>(mesh_cnt);
   scene->mesh_pool.normals = std::vector<CGL::DeviceArray<double3>>(mesh_cnt);
   scene->mesh_pool.indices = std::vector<CGL::DeviceArray<uint32_t>>(mesh_cnt);
-//  ObjMesh bunny;
-//  loadBunny(bunny);
-//  addMesh(0, shapes, materials, scene, host_meshes, bunny, {SurfaceInfo::Diffuse, diffuse_bunny});
+  ObjMesh bunny;
+  loadBunny(bunny);
+  addMesh(0, shapes, materials, scene, host_meshes, bunny, {SurfaceInfo::Diffuse, diffuse_bunny});
   ObjMesh fluid;
   loadFluid(fluid, frame_idx);
   addMesh(1, shapes, materials, scene, host_meshes, fluid, CGL::Surface(SurfaceInfo::Diffuse, diffuse_fluid));
@@ -258,6 +265,16 @@ std::tuple<std::unique_ptr<Scene>,
                  host_emissive_data,
                  weights,
                  emissive);
+//  loadLightning(frame_idx,
+//                0,
+//                make_double3(0.6, 0.5, 0.8),
+//                0.15,
+//                scene,
+//                shapes,
+//                host_media,
+//                host_medium_interface_data,
+//                materials,
+//                {SurfaceInfo::MediumInterface, 0});
   scene->light_sampler = std::make_unique<CGL::LightSampler>();
   scene->light_sampler->light_dist = std::make_unique<DiscreteDistribution>(weights.size());
   scene->light_sampler->light_dist->buildFromWeights(weights);

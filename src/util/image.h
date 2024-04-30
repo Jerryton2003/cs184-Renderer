@@ -69,7 +69,7 @@ struct ImageBuffer {
    * Clear image data.
    */
   void clear() {
-    data.clear();
+    std::fill(data.begin(), data.end(), 0);
   }
 
   size_t w; ///< width
