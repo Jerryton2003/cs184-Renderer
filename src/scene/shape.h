@@ -57,10 +57,11 @@ struct Sphere {
       t1 = 2 * c / (-b + sqrt(discriminant));
       t2 = (-b + sqrt(discriminant)) / (2 * a);
     }
-    if (t2 >= 0)
-      t = t2;
-    else if (t1 >= 0)
+    assert(t1 <= t2);
+    if (t1 >= 0)
       t = t1;
+    else if (t2 >= 0)
+      t = t2;
     else return false;
     double3 inter = o + t * d;
     isect_n = normalize(inter - center);

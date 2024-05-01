@@ -172,9 +172,9 @@ void loadLightning(int frame_idx,
   lightning.spacing = make_double3(2 * radius / lightning.resolution.x,
                                    2 * radius / lightning.resolution.y,
                                    2 * radius / lightning.resolution.z);
-  addSphere(centre, radius, shapes, materials, material);
+  auto mat_interface = CGL::Surface{SurfaceInfo::MediumInterface, static_cast<int>(medium_interface_data.size())};
+  addSphere(centre, radius, shapes, materials, mat_interface);
   medium_interface_data.push_back(MediumInterfaceData{medium_idx, -1});
-  materials.emplace_back(CGL::Surface{MediumInterface, static_cast<int>(medium_interface_data.size() - 1)});
   Medium medium;
   medium.getHeterogeneousMedium().orig = lightning.orig;
   medium.getHeterogeneousMedium().spacing = lightning.spacing;
@@ -196,6 +196,87 @@ void loadLightning(int frame_idx,
   std::cout << "load lightning " << frame_idx << " at " << centre << " with radius " << radius << std::endl;
 }
 
+void loadSmokeA(int frame_idx,
+                int8_t medium_idx,
+                const double3 &centre,
+                double radius,
+                const std::unique_ptr<CGL::Scene> &scene,
+                std::vector<CGL::Shape> &shapes,
+                std::vector<Medium> &media,
+                std::vector<MediumInterfaceData> &medium_interface_data,
+                std::vector<CGL::Surface> &materials,
+                const CGL::Surface &material) {
+  Volume volume;
+  std::string filepath = smokeADir + "frame_" + std::to_string(frame_idx) + ".vol";
+  loadVolume(filepath, &volume);
+  volume.orig = centre - make_double3(radius, radius, radius);
+  volume.spacing = make_double3(2 * radius / volume.resolution.x,
+                                2 * radius / volume.resolution.y,
+                                2 * radius / volume.resolution.z);
+  auto mat_interface = CGL::Surface{SurfaceInfo::MediumInterface, static_cast<int>(medium_interface_data.size())};
+  addSphere(centre, radius, shapes, materials, mat_interface);
+  medium_interface_data.push_back(MediumInterfaceData{medium_idx, -1});
+  Medium medium;
+  medium.getHeterogeneousMedium().orig = volume.orig;
+  medium.getHeterogeneousMedium().spacing = volume.spacing;
+  medium.getHeterogeneousMedium().resolution = volume.resolution;
+  scene->vol_textures.emplace_back(std::make_unique<CudaTexture<float4>>(make_uint3(volume.resolution.x,
+                                                                                    volume.resolution.y,
+                                                                                    volume.resolution.z)));
+  scene->vol_textures.back()->copyFrom(volume.density);
+  int density_tex_idx = scene->vol_textures.size() - 1;
+  scene->vol_textures.emplace_back(std::make_unique<CudaTexture<float4>>(make_uint3(volume.resolution.x,
+                                                                                    volume.resolution.y,
+                                                                                    volume.resolution.z)));
+  scene->vol_textures.back()->copyFrom(volume.albedo);
+  int albedo_tex_idx = scene->vol_textures.size() - 1;
+  medium.getHeterogeneousMedium().density = scene->vol_textures[density_tex_idx]->texAccessor();
+  medium.getHeterogeneousMedium().albedo = scene->vol_textures[albedo_tex_idx]->texAccessor();
+  medium.getHeterogeneousMedium().majorant = volume.majorant;
+  media.emplace_back(medium);
+  std::cout << "load smoke_a " << frame_idx << " at " << centre << " with radius " << radius << std::endl;
+}
+
+void loadSmokeB(int frame_idx,
+                int8_t medium_idx,
+                const double3 &centre,
+                double radius,
+                const std::unique_ptr<CGL::Scene> &scene,
+                std::vector<CGL::Shape> &shapes,
+                std::vector<Medium> &media,
+                std::vector<MediumInterfaceData> &medium_interface_data,
+                std::vector<CGL::Surface> &materials,
+                const CGL::Surface &material) {
+  Volume volume;
+  std::string filepath = smokeBDir + "frame_" + std::to_string(frame_idx) + ".vol";
+  loadVolume(filepath, &volume);
+  volume.orig = centre - make_double3(radius, radius, radius);
+  volume.spacing = make_double3(2 * radius / volume.resolution.x,
+                                2 * radius / volume.resolution.y,
+                                2 * radius / volume.resolution.z);
+  auto mat_interface = CGL::Surface{SurfaceInfo::MediumInterface, static_cast<int>(medium_interface_data.size())};
+  addSphere(centre, radius, shapes, materials, mat_interface);
+  medium_interface_data.push_back(MediumInterfaceData{medium_idx, -1});
+  Medium medium;
+  medium.getHeterogeneousMedium().orig = volume.orig;
+  medium.getHeterogeneousMedium().spacing = volume.spacing;
+  medium.getHeterogeneousMedium().resolution = volume.resolution;
+  scene->vol_textures.emplace_back(std::make_unique<CudaTexture<float4>>(make_uint3(volume.resolution.x,
+                                                                                    volume.resolution.y,
+                                                                                    volume.resolution.z)));
+  scene->vol_textures.back()->copyFrom(volume.density);
+  int density_tex_idx = scene->vol_textures.size() - 1;
+  scene->vol_textures.emplace_back(std::make_unique<CudaTexture<float4>>(make_uint3(volume.resolution.x,
+                                                                                    volume.resolution.y,
+                                                                                    volume.resolution.z)));
+  scene->vol_textures.back()->copyFrom(volume.albedo);
+  int albedo_tex_idx = scene->vol_textures.size() - 1;
+  medium.getHeterogeneousMedium().density = scene->vol_textures[density_tex_idx]->texAccessor();
+  medium.getHeterogeneousMedium().albedo = scene->vol_textures[albedo_tex_idx]->texAccessor();
+  medium.getHeterogeneousMedium().majorant = volume.majorant;
+  media.emplace_back(medium);
+  std::cout << "load smoke_b " << frame_idx << " at " << centre << " with radius " << radius << std::endl;
+}
 void addSphereLight(const double3 &centre,
                     double radius,
                     std::vector<CGL::Shape> &shapes,
@@ -265,16 +346,26 @@ std::tuple<std::unique_ptr<Scene>,
                  host_emissive_data,
                  weights,
                  emissive);
-//  loadLightning(frame_idx,
-//                0,
-//                make_double3(0.6, 0.5, 0.8),
-//                0.15,
-//                scene,
-//                shapes,
-//                host_media,
-//                host_medium_interface_data,
-//                materials,
-//                {SurfaceInfo::MediumInterface, 0});
+  loadLightning(frame_idx,
+                0,
+                make_double3(0.6, 0.5, 0.8),
+                0.15,
+                scene,
+                shapes,
+                host_media,
+                host_medium_interface_data,
+                materials,
+                {SurfaceInfo::MediumInterface, 0});
+  loadSmokeB(frame_idx,
+             1,
+             make_double3(-0.1, 0.6, 0.7),
+             0.09,
+             scene,
+             shapes,
+             host_media,
+             host_medium_interface_data,
+             materials,
+             {SurfaceInfo::MediumInterface, 0});
   scene->light_sampler = std::make_unique<CGL::LightSampler>();
   scene->light_sampler->light_dist = std::make_unique<DiscreteDistribution>(weights.size());
   scene->light_sampler->light_dist->buildFromWeights(weights);
@@ -301,6 +392,7 @@ int main(int argc, char **argv) {
   auto ray_tracer = std::make_unique<CGL::RaytracedRenderer>();
   ray_tracer->set_camera(camera);
   ray_tracer->set_scene(scene);
+  assert(shapes.size() == materials.size());
   ray_tracer->build_accel(shapes.size(), shapes, materials);
   std::string filepath = outputDir + "frame_" + std::to_string(frame_idx) + ".png";
   std::cout << "render to frame_" << frame_idx << ".png" << std::endl;

@@ -155,9 +155,6 @@ static CUDA_GLOBAL void kernelRayGeneration(int num_paths,
   auto sensor_y = 2 * tan(radians(vFov) / 2) * (y - 0.5);
   double3 sensor_dir = make_double3(sensor_x, sensor_y, -1);
   double3 world_sensor_dir = normalize(cam_to_world * sensor_dir);
-//  atomicAdd(&(kImage[tid].x), sensor_dir.x);
-//  atomicAdd(&(kImage[tid].y), sensor_dir.y);
-//  atomicAdd(&(kImage[tid].z), sensor_dir.z);
   kMatEvalResult[tid] = make_double3(1.0, 1.0, 1.0);
   kMatPdf[tid] = 1.0;
   kOrig[tid] = cam_pos;
@@ -184,7 +181,7 @@ static CUDA_DEVICE CUDA_FORCEINLINE void updateMedium(MediumInterfaceData interf
                                                       const double3 &normal,
                                                       const double3 &nee_dir,
                                                       int8_t &cur_medium_id) {
-  cur_medium_id = (dot(nee_dir, normal) > 0) ? interface.internal_id : interface.external_id;
+  cur_medium_id = (dot(nee_dir, normal) > 0) ? interface.external_id : interface.internal_id;
 }
 
 static CUDA_DEVICE CUDA_FORCEINLINE double geometry(const double3 &pos, const double3 &normal, const double3 &orig) {
@@ -263,6 +260,10 @@ static CUDA_GLOBAL void kernelPathLogic(int num_paths) {
   atomicAdd(&(kWorkSizes[kScatterType[orig_tid]]), 1);
 }
 
+CUDA_DEVICE CUDA_FORCEINLINE bool inside(const double3 &o) {
+  return distance(o, make_double3(0.6, 0.5, 0.8)) < 0.15;
+}
+
 static CUDA_GLOBAL void kernelExtendPath(int num_paths) {
   get_and_restrict_tid(tid, num_paths);
   int orig_tid = tid;
@@ -318,13 +319,14 @@ static CUDA_GLOBAL void kernelExtendPath(int num_paths) {
           else {
             kScatterType[orig_tid] = surfaceInfo2ScatterType(surface.surface_info);
             scattered = true;
-            break;
           }
+          break;
         } else {
           orig += t * dir;
           accumulated_t += t;
           double3 sigma_s = kSceneMediumPool[medium_id].getScattering(orig);
           double3 sigma_t = kSceneMediumPool[medium_id].getAbsorption(orig) + sigma_s;
+          t_hit -= t;
           double sigma_t_channel = channel == 0 ? sigma_t.x : (channel == 1 ? sigma_t.y : sigma_t.z);
           if (kRngs[tid].get() < sigma_t_channel / sigma_m_channel) {
             T *= exp(-sigma_m * t) / maxComponent(sigma_m);
@@ -366,6 +368,7 @@ static CUDA_GLOBAL void kernelExtendPath(int num_paths) {
       }
     }
   }
+  kMediumId[tid] = medium_id;
   kT[tid] = accumulated_t;
   kNormal[tid] = normal;
   kPrimitiveId[tid] = primitive_id;
@@ -391,8 +394,7 @@ static CUDA_DEVICE double3 deltaTracking(double t_hit,
     double u = rng.get();
     double t = -log(1.0 - u) / sigma_m_channel;
     if (t >= t_hit) {
-      if (surface.surface_info ==
-          SurfaceInfo::MediumInterface) {
+      if (surface.surface_info == SurfaceInfo::MediumInterface) {
         T *= exp(-sigma_m * t_hit);
         trans_pdf_delta *= exp(-sigma_m * t_hit);
         trans_pdf_ratio *= exp(-sigma_m * t_hit);
@@ -444,12 +446,16 @@ static CUDA_GLOBAL void kernelShadowExtend(int num_paths) {
       if (medium_id >= 0)
         kNeeThroughput[tid] *= deltaTracking(nee_t_hit, surface, orig, nee_dir, medium_id, kRngs[tid],
                                              kNeePdfDelta[tid], kNeePdfRatio[tid]);
+      assert(nee_t_hit > 0.0);
       orig += nee_t_hit * nee_dir;
       accumulated_t += nee_t_hit;
       if (surface.surface_info != SurfaceInfo::MediumInterface) break;
       updateMedium(kMediumInterfaceData[surface.surf_id], normal, nee_dir, medium_id);
+      accumulated_t += EPS_F;
+      orig += EPS_F * nee_dir;
     } else {
-      // reserved for env map
+      accumulated_t = 1e9;
+      break;
     }
   }
   kNeeT[tid] = accumulated_t;
@@ -606,6 +612,7 @@ static CUDA_GLOBAL void kernelComputeRayKeys(int num_paths, BBox scene_bound) {
   get_and_restrict_tid(tid, num_paths);
   int orig_tid = tid;
   tid = kWorkIndices[tid];
+  assert(tid < kPathTracerConfig.num_paths);
   double transformed_dir_x = 0.5 * kDir[tid].x + 0.5;
   double transformed_dir_y = 0.5 * kDir[tid].y + 0.5;
   double transformed_dir_z = 0.5 * kDir[tid].z + 0.5;
@@ -635,11 +642,12 @@ void PathTracer::pathExtend(int new_paths, int current_live_paths, const BBox &s
   thrust::device_ptr<int> work_indices_ptr(work_pool->indices->begin());
   if (num_old_paths > 0) {
     kernelComputeRayKeys<<<LAUNCH_THREADS(num_old_paths)>>>(num_old_paths, scene_bound);
-    thrust::sort_by_key(ray_keys_ptr, ray_keys_ptr + num_old_paths, work_indices_ptr);
+    cudaSafeCheck(thrust::sort_by_key(ray_keys_ptr, ray_keys_ptr + num_old_paths, work_indices_ptr));
     kernelShadowExtend<<<LAUNCH_THREADS(num_old_paths)>>>(num_old_paths);
   }
+  assert(current_live_paths <= config.num_paths);
   kernelComputeRayKeys<<<LAUNCH_THREADS(current_live_paths)>>>(current_live_paths, scene_bound);
-  thrust::sort_by_key(ray_keys_ptr, ray_keys_ptr + current_live_paths, work_indices_ptr);
+  cudaSafeCheck(thrust::sort_by_key(ray_keys_ptr, ray_keys_ptr + current_live_paths, work_indices_ptr));
   kernelExtendPath<<<LAUNCH_THREADS(current_live_paths)>>>(current_live_paths);
 }
 

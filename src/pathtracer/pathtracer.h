@@ -9,6 +9,7 @@
 #include "scene/scene.h"
 #include "util/image.h"
 #include "pathtracer/camera.h"
+
 using CGL::Scene;
 
 namespace CGL {
@@ -17,15 +18,15 @@ namespace CGL {
 // nWorks is the number of works, nThreads is the number of threads
 struct MultipleWorkPool {
   int nWorks, nThreads;
-  std::unique_ptr<DeviceArray < int>> indices;
-  std::unique_ptr<DeviceArray < int>> work_sizes;
+  std::unique_ptr<DeviceArray<int>> indices;
+  std::unique_ptr<DeviceArray<int>> work_sizes;
 
   MultipleWorkPool(int nWorks_, int nThreads_)
       : nWorks(nWorks_), nThreads(nThreads_) {
-    indices = std::make_unique<DeviceArray < int>>
-    (nThreads);
-    work_sizes = std::make_unique<DeviceArray < int>>
-    (nWorks);
+    indices = std::make_unique<DeviceArray<int>>
+        (nThreads);
+    work_sizes = std::make_unique<DeviceArray<int>>
+        (nWorks);
   }
 
   void getWorkSize(std::vector<int> &host_work_sizes) const {
@@ -70,7 +71,7 @@ class PathTracer {
   // Integrator sampling settings //
   struct Config {
     int num_paths = 1 << 20; // size of path pool
-    int spp = 32;
+    int spp = 1024;
     int maxNullCollisions = 1024;
     int width{};
     int height{};
