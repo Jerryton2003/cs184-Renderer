@@ -356,7 +356,7 @@ std::tuple<std::unique_ptr<Scene>,
                 host_medium_interface_data,
                 materials,
                 {SurfaceInfo::MediumInterface, 0});
-  loadSmokeB(frame_idx,
+  loadSmokeA(frame_idx,
              1,
              make_double3(-0.1, 0.6, 0.7),
              0.09,

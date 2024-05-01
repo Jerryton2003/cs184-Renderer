@@ -19,17 +19,17 @@ struct HeterogeneousMedium {
   CUDA_DEVICE CUDA_FORCEINLINE double3 getScattering(const double3 &p) const {
     double3 pos = (p - orig) / spacing;
     float4 val = density.sample(pos) * albedo.sample(p);
-    return 100.0 * make_double3(val.x, val.y, val.z);
+    return make_double3(val.x, val.y, val.z);
   }
 
   CUDA_DEVICE CUDA_FORCEINLINE double3 getAbsorption(const double3 &p) const {
     double3 pos = (p - orig) / spacing;
     float4 val = density.sample(pos) * (1.f - albedo.sample(p));
-    return 100.0 * make_double3(val.x, val.y, val.z);
+    return make_double3(val.x, val.y, val.z);
   }
 
   CUDA_DEVICE CUDA_FORCEINLINE double3 getMajorant() const {
-    return 100.0 * majorant;
+    return majorant;
   }
 };
 
