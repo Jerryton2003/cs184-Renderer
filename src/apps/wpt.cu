@@ -163,8 +163,8 @@ void loadLightning(int frame_idx,
                    const CGL::Surface &material) {
   Volume volume_red;
   Volume volume_blue;
-  std::string filepath_red = lightningRedDir + "frame_" + std::to_string(frame_idx) + ".vol";
-  std::string filepath_blue = lightningBlueDir + "frame_" + std::to_string(frame_idx) + ".vol";
+  std::string filepath_red = lightningRedDir + "frame_" + std::to_string(frame_idx - 125) + ".vol";
+  std::string filepath_blue = lightningBlueDir + "frame_" + std::to_string(frame_idx - 125) + ".vol";
   loadVolume(filepath_red, &volume_red);
   loadVolume(filepath_blue, &volume_blue);
   auto lightning = mixVolumes(volume_red, volume_blue);
@@ -207,7 +207,7 @@ void loadSmokeA(int frame_idx,
                 std::vector<CGL::Surface> &materials,
                 const CGL::Surface &material) {
   Volume volume;
-  std::string filepath = smokeADir + "frame_" + std::to_string(frame_idx) + ".vol";
+  std::string filepath = smokeADir + "frame_" + std::to_string(frame_idx - 125) + ".vol";
   loadVolume(filepath, &volume);
   volume.orig = centre - make_double3(radius, radius, radius);
   volume.spacing = make_double3(2 * radius / volume.resolution.x,
