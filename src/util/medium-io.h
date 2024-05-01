@@ -51,12 +51,19 @@ inline void loadVolume(const std::string &path, Volume *volume) {
   file >> volume->resolution.x >> volume->resolution.y >> volume->resolution.z;
   volume->density.resize(volume->resolution.x * volume->resolution.y * volume->resolution.z);
   volume->albedo.resize(volume->resolution.x * volume->resolution.y * volume->resolution.z);
+  volume->majorant = make_constant(0.0);
   for (int i = 0; i < volume->resolution.x * volume->resolution.y * volume->resolution.z; i++) {
     file >> volume->density[i].x >> volume->density[i].y >> volume->density[i].z;
+    volume->majorant.x = std::max(volume->majorant.x, static_cast<double>(volume->density[i].x));
+    volume->majorant.y = std::max(volume->majorant.y, static_cast<double>(volume->density[i].y));
+    volume->majorant.z = std::max(volume->majorant.z, static_cast<double>(volume->density[i].z));
     volume->density[i].w = 0;
   }
   for (int i = 0; i < volume->resolution.x * volume->resolution.y * volume->resolution.z; i++) {
     file >> volume->albedo[i].x >> volume->albedo[i].y >> volume->albedo[i].z;
+    volume->majorant.x = std::max(volume->majorant.x, static_cast<double>(volume->albedo[i].x));
+    volume->majorant.y = std::max(volume->majorant.y, static_cast<double>(volume->albedo[i].y));
+    volume->majorant.z = std::max(volume->majorant.z, static_cast<double>(volume->albedo[i].z));
     volume->albedo[i].w = 0;
   }
 }

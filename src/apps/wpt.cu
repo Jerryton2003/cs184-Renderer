@@ -315,7 +315,7 @@ std::tuple<std::unique_ptr<Scene>,
   auto isotropic = addIsotropicPhaseFunction(make_constant(1.0), host_isotropic_data, host_phase_functions);
   auto diffuse_bunny = addDiffuse(make_constant(0.5), host_diffuse_data);
   auto diffuse_fluid = addDiffuse(make_double3(0.0, 0.3, 0.7), host_diffuse_data);
-  auto emissive = addEmissive(make_constant(5.0), host_emissive_data);
+  auto emissive = addEmissive(make_double3(5.0 + 2.5 * sin(frame_idx / 15.0), 5.0, 5.0 + 2.5 * sin(frame_idx / 15.0)), host_emissive_data);
   int mesh_cnt = 2;
   std::vector<CGL::Mesh> host_meshes(mesh_cnt);
   scene->meshes = std::make_unique<CGL::DeviceArray<CGL::Mesh>>(mesh_cnt);
@@ -346,10 +346,19 @@ std::tuple<std::unique_ptr<Scene>,
                  host_emissive_data,
                  weights,
                  emissive);
+  addSphereLight(make_double3(-1.0, 2.0, -0.5),
+                 0.2,
+                 shapes,
+                 materials,
+                 host_light_indices,
+                 host_light_idx_map,
+                 host_emissive_data,
+                 weights,
+                 emissive);
   loadLightning(frame_idx,
                 0,
-                make_double3(0.6, 0.5, 0.8),
-                0.15,
+                make_double3(-0.1, 0.6, 0.7),
+                0.09,
                 scene,
                 shapes,
                 host_media,
@@ -358,8 +367,8 @@ std::tuple<std::unique_ptr<Scene>,
                 {SurfaceInfo::MediumInterface, 0});
   loadSmokeA(frame_idx,
              1,
-             make_double3(-0.1, 0.6, 0.7),
-             0.09,
+             make_double3(0.6, 0.5, 0.8),
+             0.15,
              scene,
              shapes,
              host_media,

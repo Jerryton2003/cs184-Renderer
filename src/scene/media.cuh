@@ -18,13 +18,13 @@ struct HeterogeneousMedium {
 
   CUDA_DEVICE CUDA_FORCEINLINE double3 getScattering(const double3 &p) const {
     double3 pos = (p - orig) / spacing;
-    float4 val = density.sample(pos) * albedo.sample(p);
+    float4 val = density.sample(pos) * albedo.sample(pos);
     return make_double3(val.x, val.y, val.z);
   }
 
   CUDA_DEVICE CUDA_FORCEINLINE double3 getAbsorption(const double3 &p) const {
     double3 pos = (p - orig) / spacing;
-    float4 val = density.sample(pos) * (1.f - albedo.sample(p));
+    float4 val = density.sample(pos) * (1.f - albedo.sample(pos));
     return make_double3(val.x, val.y, val.z);
   }
 
@@ -99,7 +99,7 @@ case MEDIUM_TYPE##_enum: return data.MEDIUM_TYPE##_union.getMajorant();
 
 #undef GENERATE_GET_MAJORANT
 #define GENERATE_GET_MEDIUM(MEDIUM_TYPE) \
-MEDIUM_TYPE& get##MEDIUM_TYPE() { return data.MEDIUM_TYPE##_union; } \
+MEDIUM_TYPE& get##MEDIUM_TYPE() { type = MEDIUM_TYPE##_enum; return data.MEDIUM_TYPE##_union; } \
 const MEDIUM_TYPE& get##MEDIUM_TYPE() const { return data.MEDIUM_TYPE##_union; }
 
   FOREACH_MEDIUM_TYPE(GENERATE_GET_MEDIUM)
